@@ -1,7 +1,7 @@
 # Личный проект «Кексобукинг» [![Build status][travis-image]][travis-url]
 
 * Студент: [Дмитрий Ширченко](https://up.htmlacademy.ru/javascript/21/user/571125).
-* Наставник: `Неизвестно`.
+* Наставник: [Олег Глущенко](https://up.htmlacademy.ru/javascript/21/user/305355)
 
 ---
 
