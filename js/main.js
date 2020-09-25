@@ -58,37 +58,44 @@ const getElementsFromArray = function (array) {
 //       'y': 'Координата Y'
 //     }
 //   };
-const offerTypes = ['palace', 'flat', 'house', 'bungalow'];
-const offerFeatures = ["wifi", "dishwasher", "parking", "washer", "elevator", "conditioner"];
-const offerFotos = ["http://o0.github.io/assets/images/tokyo/hotel1.jpg", "http://o0.github.io/assets/images/tokyo/hotel2.jpg", "http://o0.github.io/assets/images/tokyo/hotel3.jpg"];
-const offerCheckin = ['12:00', '13:00', '14:00'];
-const offerCheckout = ['12:00', '13:00', '14:00'];
+const OFFER_TYPES = ['palace', 'flat', 'house', 'bungalow'];
+const OFFER_FEATURES = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
+const OFFER_FOTOS = [
+  'http://o0.github.io/assets/images/tokyo/hotel1.jpg',
+  'http://o0.github.io/assets/images/tokyo/hotel2.jpg',
+  'http://o0.github.io/assets/images/tokyo/hotel3.jpg'];
+const OFFER_CHECKIN = ['12:00', '13:00', '14:00'];
+const OFFER_CHECKOUT = ['12:00', '13:00', '14:00'];
 let map = document.querySelector('.map');
 
 const generatePost = function () {
   let post = {};
+  const TOP_OFFSET = 130;
+  const MAX_HEIGHT = 400;
+  const MAX_PRICE = 1000;
+
   post.author = {};
   post.author.avatar = 'img/avatars/user0' + getRandomCeil(8) + '.png';
 
   post.location = {};
   post.location.x = getRandomCeil(map.offsetWidth); // Тут явно что-то не так, если окно браузера сужать/расширять то метки ползут по карте, такого быть наверное не должно!
-  post.location.y = 130 + getRandomFloor(400);
+  post.location.y = TOP_OFFSET + getRandomFloor(MAX_HEIGHT);
 
   post.offer = {};
   post.offer.title = 'Random Title';
   post.offer.address = post.location.x + ', ' + post.location.y;
-  post.offer.price = getRandomCeil(1000);
-  post.offer.type = offerTypes[getRandomFloor(offerTypes.length)];
+  post.offer.price = getRandomCeil(MAX_PRICE);
+  post.offer.type = OFFER_TYPES[getRandomFloor(OFFER_TYPES.length)];
   post.offer.rooms = getRandomCeil(5);
   post.offer.guests = getRandomCeil(6);
-  post.offer.checkin = offerCheckin[getRandomFloor(offerCheckin.length)];
-  post.offer.checkout = offerCheckout[getRandomFloor(offerCheckout.length)];
+  post.offer.checkin = OFFER_CHECKIN[getRandomFloor(OFFER_CHECKIN.length)];
+  post.offer.checkout = OFFER_CHECKOUT[getRandomFloor(OFFER_CHECKOUT.length)];
 
-  post.offer.features = getElementsFromArray(offerFeatures);
+  post.offer.features = getElementsFromArray(OFFER_FEATURES);
 
   post.offer.description = 'Описание объекта';
 
-  post.offer.fotos = getElementsFromArray(offerFotos);
+  post.offer.fotos = getElementsFromArray(OFFER_FOTOS);
 
   return post;
 };
@@ -121,8 +128,9 @@ let generatePin = function (post) {
 // 4 Добавляем DocumentFragment в DOM
 let similarPinElement = document.querySelector('.map__pins'); // Сюда будем добавлять фрагмент составленный из #pin
 let fragment = document.createDocumentFragment();
+const MOCK_COUNT = 8;
 
-for (let i = 0; i < 8; i++) {
+for (let i = 0; i < MOCK_COUNT; i++) {
   fragment.appendChild(generatePin(postBox[i]));
 }
 
