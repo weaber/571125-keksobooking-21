@@ -222,7 +222,6 @@ let cardBlock = document.querySelector('.map');
 let beforeBlock = cardBlock.querySelector('.map__filters-container');
 
 cardBlock.insertBefore(newCard, beforeBlock);
-
-console.log(newCard);
+// console.log(newCard);
 
 
