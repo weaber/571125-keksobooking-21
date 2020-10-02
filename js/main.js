@@ -77,7 +77,7 @@ const generatePost = function () {
   const MAX_GUESTS = 6;
 
   post.author = {};
-  post.author.avatar = 'img/avatars/user0' + getRandomCeil(8) + '.png';
+  post.author.avatar = `img/avatars/user0${getRandomCeil(8)}.png`;
 
   post.location = {};
   post.location.x = getRandomCeil(map.offsetWidth); // Тут возможно что-то не так, если окно браузера сужать/расширять то метки ползут по карте, такого быть наверное не должно
@@ -85,7 +85,7 @@ const generatePost = function () {
 
   post.offer = {};
   post.offer.title = 'Random Title';
-  post.offer.address = post.location.x + ', ' + post.location.y;
+  post.offer.address = `${post.location.x}, ${post.location.y}`;
   post.offer.price = getRandomCeil(MAX_PRICE);
   post.offer.type = OFFER_TYPES[getRandomFloor(OFFER_TYPES.length)];
   post.offer.rooms = getRandomCeil(MAX_ROOMS);
@@ -95,7 +95,7 @@ const generatePost = function () {
 
   post.offer.features = getElementsFromArray(OFFER_FEATURES);
 
-  post.offer.description = 'Какое-то описание объекта';
+  post.offer.description = `Какое-то описание ${post.offer.address} объекта`;
 
   post.offer.fotos = getElementsFromArray(OFFER_FOTOS);
 
@@ -156,66 +156,68 @@ let generateCard = function (post) {
   let cardTime = card.querySelector('.popup__text--time');
   let cardDescription = card.querySelector('.popup__description');
   let cardAvatar = card.querySelector('.popup__avatar');
+  const cardTypesMap = {
+    flat: 'Квартира',
+    bungalow: 'Бунгало',
+    house: 'Дом',
+    palace: 'Дворец'
+  };
 
   cardTitle.textContent = post.offer.title;
   cardAddress.textContent = post.offer.address;
-  cardPrice.textContent = post.offer.price + '₽/ночь';
+  cardPrice.textContent = `${post.offer.price}₽/ночь`;
+  cardType.textContent = cardTypesMap[post.offer.type];
 
-  if (post.offer.type === 'flat') {
-    cardType.textContent = 'Квартира';
-  } else if (post.offer.type === 'bungalow') {
-    cardType.textContent = 'Бунгало';
-  } else if (post.offer.type === 'house') {
-    cardType.textContent = 'Дом';
-  } else if (post.offer.type === 'palace') {
-    cardType.textContent = 'Дворец';
-  }
-
-  cardCapacity.textContent = post.offer.rooms + ' комнаты для ' + post.offer.guests + ' гостей';
-  cardTime.textContent = 'Заезд после ' + post.offer.checkin + ', выезд до ' + post.offer.checkout;
+  cardCapacity.textContent = `${post.offer.rooms} комнаты для ${post.offer.guests} гостей`;
+  cardTime.textContent = `Заезд после ${post.offer.checkin}, выезд до ${post.offer.checkout}`;
   cardDescription.textContent = post.offer.description;
   cardAvatar.setAttribute('src', post.author.avatar);
 
 
   // FEATURES - решаю задачу в лоб, ищу контейнер ul, очищаю и создаю новые li записывая им нужные классы.
   let cardFeatures = card.querySelector('.popup__features'); // это ul
-  let featuresList = cardFeatures.querySelectorAll('li'); // это элементы списка
+
   // Очищаю список
-  for (let i = featuresList.length - 1; i >= 0; i--) {
-    cardFeatures.removeChild(featuresList[i]);
-  }
+  cardFeatures.innerHTML = ``;
 
   // Создаю li на основе данных postBox'а и заполняю ими список
   for (let i = 0; i < post.offer.features.length; i++) {
     let newFeature = document.createElement('li');
-    newFeature.classList.add('popup__feature', 'popup__feature--' + post.offer.features[i]);
+    newFeature.classList.add(`popup__feature`, `popup__feature--${post.offer.features[i]}`);
     cardFeatures.appendChild(newFeature);
   }
 
   // PHOTOS - решаю также в лоб как и с блоком features
   let cardPhotos = card.querySelector('.popup__photos'); // это div сюда будем пушить фотки
-  let photosList = cardPhotos.querySelector('img'); // это img
+  let photo = cardPhotos.querySelector('img'); // это img, я его беру как шаблон
 
-  cardPhotos.removeChild(photosList);
-
+  cardPhotos.innerHTML = ``;
 
   // Заполняю создаю img и заполняю ими div
-  for (let i = 0; i < post.offer.fotos.length; i++) {
-    let newPhoto = document.createElement('img');
-    newPhoto.classList.add('popup__photo');
-    newPhoto.setAttribute('width', '45');
-    newPhoto.setAttribute('height', '40');
-    newPhoto.setAttribute('alt', 'Фотография жилья');
-    newPhoto.setAttribute('src', post.offer.fotos[i]);
 
+  for (let i = 0; i < post.offer.fotos.length; i++) {
+    let newPhoto = photo.cloneNode(true);
+    newPhoto.setAttribute('src', post.offer.fotos[i]);
     cardPhotos.appendChild(newPhoto);
   }
+
+  // for (let i = 0; i < post.offer.fotos.length; i++) {
+  //   let newPhoto = document.createElement('img');
+  //   newPhoto.classList.add('popup__photo');
+  //   newPhoto.setAttribute('width', NEW_PHOTO_WIDTH);
+  //   newPhoto.setAttribute('height', NEW_PHOTO_HEIGHT);
+  //   newPhoto.setAttribute('alt', 'Фотография жилья');
+  //   newPhoto.setAttribute('src', post.offer.fotos[i]);
+
+  //   cardPhotos.appendChild(newPhoto);
+  // }
 
   return card;
 };
 
 // Генерирую карточку
 let newCard = generateCard(postBox[0]);
+
 // Сюда будем добавлять новую карточку
 let cardBlock = document.querySelector('.map');
 // Ищем элемент, перед которым вставлять карточку объявления
