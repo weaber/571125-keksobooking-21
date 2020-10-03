@@ -73,36 +73,39 @@ const generatePost = function () {
   const TOP_OFFSET = 130;
   const MAX_HEIGHT = 400;
   const MAX_PRICE = 1000;
+  const MAX_ROOMS = 5;
+  const MAX_GUESTS = 6;
 
   post.author = {};
-  post.author.avatar = 'img/avatars/user0' + getRandomCeil(8) + '.png';
+  post.author.avatar = `img/avatars/user0${getRandomCeil(8)}.png`;
 
   post.location = {};
-  post.location.x = getRandomCeil(map.offsetWidth); // Тут явно что-то не так, если окно браузера сужать/расширять то метки ползут по карте, такого быть наверное не должно!
+  post.location.x = getRandomCeil(map.offsetWidth); // Тут возможно что-то не так, если окно браузера сужать/расширять то метки ползут по карте, такого быть наверное не должно
   post.location.y = TOP_OFFSET + getRandomFloor(MAX_HEIGHT);
 
   post.offer = {};
   post.offer.title = 'Random Title';
-  post.offer.address = post.location.x + ', ' + post.location.y;
+  post.offer.address = `${post.location.x}, ${post.location.y}`;
   post.offer.price = getRandomCeil(MAX_PRICE);
   post.offer.type = OFFER_TYPES[getRandomFloor(OFFER_TYPES.length)];
-  post.offer.rooms = getRandomCeil(5);
-  post.offer.guests = getRandomCeil(6);
+  post.offer.rooms = getRandomCeil(MAX_ROOMS);
+  post.offer.guests = getRandomCeil(MAX_GUESTS);
   post.offer.checkin = OFFER_CHECKIN[getRandomFloor(OFFER_CHECKIN.length)];
   post.offer.checkout = OFFER_CHECKOUT[getRandomFloor(OFFER_CHECKOUT.length)];
 
   post.offer.features = getElementsFromArray(OFFER_FEATURES);
 
-  post.offer.description = 'Описание объекта';
+  post.offer.description = `Какое-то описание ${post.offer.address} объекта`;
 
   post.offer.fotos = getElementsFromArray(OFFER_FOTOS);
 
   return post;
 };
 
+// Генерирую объект с данными объявлений
+const MOCK_COUNT = 8; // Количество объявлений
 let postBox = [];
-
-for (let i = 0; i < 8; i++) {
+for (let i = 0; i < MOCK_COUNT; i++) {
   postBox.push(generatePost());
 }
 
@@ -112,10 +115,10 @@ for (let i = 0; i < 8; i++) {
 
 map.classList.remove('map--faded');
 
-// 3 Ищу шаблон
-
+// 3 Ищу шаблон булавки
 let templatePin = document.querySelector('#pin').content.querySelector('.map__pin');
-//  console.log(templatePin);
+// console.log(templatePin);
+// Заполняю шаблон pin
 let generatePin = function (post) {
   let pin = templatePin.cloneNode(true);
 
@@ -125,19 +128,102 @@ let generatePin = function (post) {
   //  style="left: {{location.x + смещение по X}}px; top: {{location.y + смещение по Y}}px;"  map__pin 50 на 70, значит смещение -25 по Х и -70 по Y
   return pin;
 };
+
 // 4 Добавляем DocumentFragment в DOM
-let similarPinElement = document.querySelector('.map__pins'); // Сюда будем добавлять фрагмент составленный из #pin
-let fragment = document.createDocumentFragment();
-const MOCK_COUNT = 8;
+let mapPins = document.querySelector('.map__pins'); // Сюда будем добавлять фрагмент составленный из #pin
+let pinsFragment = document.createDocumentFragment(); // Создал фрагмент
 
 for (let i = 0; i < MOCK_COUNT; i++) {
-  fragment.appendChild(generatePin(postBox[i]));
+  pinsFragment.appendChild(generatePin(postBox[i]));
 }
 
-similarPinElement.appendChild(fragment);
-// console.log(similarPinElement);
+mapPins.appendChild(pinsFragment);
+// console.log(mapPins);
 
-// На будущее мне кажется пригодится
-// let templateCard = document.querySelector('#card')
-//     .content
-//     .querySelector('.map__card');
+// module3-task2
+// Ищем шаблон #card
+let templateCard = document.querySelector('#card').content.querySelector('.map__card');
+
+// Заполняем шаблон #card
+let generateCard = function (post) {
+  let card = templateCard.cloneNode(true);
+
+  let cardTitle = card.querySelector('.popup__title');
+  let cardAddress = card.querySelector('.popup__text--address');
+  let cardPrice = card.querySelector('.popup__text--price');
+  let cardType = card.querySelector('.popup__type');
+  let cardCapacity = card.querySelector('.popup__text--capacity');
+  let cardTime = card.querySelector('.popup__text--time');
+  let cardDescription = card.querySelector('.popup__description');
+  let cardAvatar = card.querySelector('.popup__avatar');
+  const cardTypesMap = {
+    flat: 'Квартира',
+    bungalow: 'Бунгало',
+    house: 'Дом',
+    palace: 'Дворец'
+  };
+
+  cardTitle.textContent = post.offer.title;
+  cardAddress.textContent = post.offer.address;
+  cardPrice.textContent = `${post.offer.price}₽/ночь`;
+  cardType.textContent = cardTypesMap[post.offer.type];
+
+  cardCapacity.textContent = `${post.offer.rooms} комнаты для ${post.offer.guests} гостей`;
+  cardTime.textContent = `Заезд после ${post.offer.checkin}, выезд до ${post.offer.checkout}`;
+  cardDescription.textContent = post.offer.description;
+  cardAvatar.setAttribute('src', post.author.avatar);
+
+
+  // FEATURES - решаю задачу в лоб, ищу контейнер ul, очищаю и создаю новые li записывая им нужные классы.
+  let cardFeatures = card.querySelector('.popup__features'); // это ul
+
+  // Очищаю список
+  cardFeatures.innerHTML = ``;
+
+  // Создаю li на основе данных postBox'а и заполняю ими список
+  for (let i = 0; i < post.offer.features.length; i++) {
+    let newFeature = document.createElement('li');
+    newFeature.classList.add(`popup__feature`, `popup__feature--${post.offer.features[i]}`);
+    cardFeatures.appendChild(newFeature);
+  }
+
+  // PHOTOS - решаю также в лоб как и с блоком features
+  let cardPhotos = card.querySelector('.popup__photos'); // это div сюда будем пушить фотки
+  let photo = cardPhotos.querySelector('img'); // это img, я его беру как шаблон
+
+  cardPhotos.innerHTML = ``;
+
+  // Заполняю создаю img и заполняю ими div
+
+  for (let i = 0; i < post.offer.fotos.length; i++) {
+    let newPhoto = photo.cloneNode(true);
+    newPhoto.setAttribute('src', post.offer.fotos[i]);
+    cardPhotos.appendChild(newPhoto);
+  }
+
+  // for (let i = 0; i < post.offer.fotos.length; i++) {
+  //   let newPhoto = document.createElement('img');
+  //   newPhoto.classList.add('popup__photo');
+  //   newPhoto.setAttribute('width', NEW_PHOTO_WIDTH);
+  //   newPhoto.setAttribute('height', NEW_PHOTO_HEIGHT);
+  //   newPhoto.setAttribute('alt', 'Фотография жилья');
+  //   newPhoto.setAttribute('src', post.offer.fotos[i]);
+
+  //   cardPhotos.appendChild(newPhoto);
+  // }
+
+  return card;
+};
+
+// Генерирую карточку
+let newCard = generateCard(postBox[0]);
+
+// Сюда будем добавлять новую карточку
+let cardBlock = document.querySelector('.map');
+// Ищем элемент, перед которым вставлять карточку объявления
+let beforeBlock = cardBlock.querySelector('.map__filters-container');
+
+cardBlock.insertBefore(newCard, beforeBlock);
+// console.log(newCard);
+
+
