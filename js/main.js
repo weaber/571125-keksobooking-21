@@ -229,10 +229,17 @@ let beforeBlock = cardBlock.querySelector('.map__filters-container');
 cardBlock.insertBefore(newCard, beforeBlock);
 // console.log(newCard);
 
-const mainPin = document.querySelector('.map__pin--main');
+// Деактивация формы
 const adForm = document.querySelector('.ad-form');
-const address = adForm.querySelector('#address');
+const fieldsets = adForm.querySelectorAll('fieldset');
 
+for (let fieldset of fieldsets) {
+  fieldset.disabled = true;
+}
+
+// Активация формы
+const mainPin = document.querySelector('.map__pin--main');
+const address = adForm.querySelector('#address');
 
 const makeMapActive = function () {
   map.classList.remove('map--faded');
@@ -242,6 +249,9 @@ const makeMapActive = function () {
   // или вообще тут правда размеры метки взять с размеров элементов разметки и отсупы вычислить?
   const mainPinOffsetX = 32;
   const mainPinOffsetY = 44;
+  for (let fieldset of fieldsets) {
+    fieldset.disabled = false;
+  }
   address.value = `${mainPinRect.x - bodyRect.x + mainPinOffsetX} ${mainPinRect.y - bodyRect.y + mainPinOffsetY}`;
 };
 
@@ -277,41 +287,67 @@ inputTitle.addEventListener('input', function () {
   }
 });
 
+// console.log(inputRooms);
+// console.log(inputRooms.options[inputRooms.selectedIndex]);
+// console.log(inputRooms.options[inputRooms.selectedIndex].value);
+// console.log(inputRooms.value);
+// console.log(inputCapacity);
+// console.log(inputCapacity.value);
+
+// JavaScript'ом привожу форму в норм состояние
+if (inputRooms.value === '1') {
+  inputCapacity.options[0].disabled = true;
+  inputCapacity.options[1].disabled = true;
+  inputCapacity.options[2].selected = true;
+  inputCapacity.options[3].disabled = true;
+}
+
+// А тут уже фильтрую варианты
 inputRooms.addEventListener('input', function () {
-  if (inputRooms.value !== inputCapacity.value) {
-    inputRooms.setCustomValidity('Количество комнат должно соответствовать количеству гостей');
-    inputRooms.reportValidity();
-  } else {
-    inputRooms.setCustomValidity('');
-    inputCapacity.setCustomValidity('');
+  if (inputRooms.value === '1') {
+    inputCapacity.options[0].disabled = true;
+    inputCapacity.options[1].disabled = true;
+    inputCapacity.options[2].disabled = false;
+    inputCapacity.options[2].selected = true;
+    inputCapacity.options[3].disabled = true;
+  }
+
+  if (inputRooms.value === '2') {
+    inputCapacity.options[0].disabled = true;
+    inputCapacity.options[1].disabled = false;
+    inputCapacity.options[2].disabled = false;
+    inputCapacity.options[2].selected = true;
+    inputCapacity.options[3].disabled = true;
+  }
+
+  if (inputRooms.value === '3') {
+    inputCapacity.options[0].disabled = false;
+    inputCapacity.options[1].disabled = false;
+    inputCapacity.options[2].disabled = false;
+    inputCapacity.options[2].selected = true;
+    inputCapacity.options[3].disabled = true;
+  }
+
+  if (inputRooms.value === '100') {
+    inputCapacity.options[0].disabled = true;
+    inputCapacity.options[1].disabled = true;
+    inputCapacity.options[2].disabled = true;
+    inputCapacity.options[3].disabled = false;
+    inputCapacity.options[3].selected = true;
   }
 });
-
-inputCapacity.addEventListener('input', function () {
-  if (inputCapacity.value !== inputRooms.value) {
-    inputCapacity.setCustomValidity('Количество гостей должно соответствовать количеству комнат');
-    inputCapacity.reportValidity();
-  } else {
-    inputRooms.setCustomValidity('');
-    inputCapacity.setCustomValidity('');
-  }
-});
-
 
 inputPrice.addEventListener('input', function () {
-  console.log(inputPrice.value.length);
-
   if (inputPrice.value.length === 0) {
     inputPrice.setCustomValidity('Укажите цену');
-  } else {
-    inputPrice.setCustomValidity('');
+    return false;
   }
 
   if (inputPrice.value > 1000000) {
     inputPrice.setCustomValidity('Цена должна быть меньше 1.000.000');
-  } else {
-    inputPrice.setCustomValidity('');
+    return false;
   }
+  return inputPrice.setCustomValidity('');
 });
 
 // adForm.addEventListener('submit', function (evt) {
