@@ -113,7 +113,7 @@ for (let i = 0; i < MOCK_COUNT; i++) {
 
 // 2 Делаем активной карту
 
-map.classList.remove('map--faded');
+// map.classList.remove('map--faded'); убрал активацию карты
 
 // 3 Ищу шаблон булавки
 let templatePin = document.querySelector('#pin').content.querySelector('.map__pin');
@@ -124,7 +124,10 @@ let generatePin = function (post) {
 
   pin.querySelector('img').setAttribute('src', post.author.avatar);
   pin.querySelector('img').setAttribute('alt', post.offer.title);
-  pin.setAttribute('style', 'left: ' + (post.location.x - 25) + 'px; top: ' + (post.location.y - 70) + 'px;');
+  const pinOffsetX = 25;
+  const pinOffsetY = 70;
+
+  pin.setAttribute('style', 'left: ' + (post.location.x - pinOffsetX) + 'px; top: ' + (post.location.y - pinOffsetY) + 'px;');
   //  style="left: {{location.x + смещение по X}}px; top: {{location.y + смещение по Y}}px;"  map__pin 50 на 70, значит смещение -25 по Х и -70 по Y
   return pin;
 };
@@ -226,4 +229,133 @@ let beforeBlock = cardBlock.querySelector('.map__filters-container');
 cardBlock.insertBefore(newCard, beforeBlock);
 // console.log(newCard);
 
+// Деактивация формы
+const adForm = document.querySelector('.ad-form');
+const fieldsets = adForm.querySelectorAll('fieldset');
 
+for (let fieldset of fieldsets) {
+  fieldset.disabled = true;
+}
+
+// Активация формы
+const mainPin = document.querySelector('.map__pin--main');
+const address = adForm.querySelector('#address');
+
+const makeMapActive = function () {
+  map.classList.remove('map--faded');
+  adForm.classList.remove('ad-form--disabled');
+  const bodyRect = document.body.getBoundingClientRect();
+  const mainPinRect = mainPin.getBoundingClientRect();
+  // или вообще тут правда размеры метки взять с размеров элементов разметки и отсупы вычислить?
+  const mainPinOffsetX = 32;
+  const mainPinOffsetY = 44;
+  for (let fieldset of fieldsets) {
+    fieldset.disabled = false;
+  }
+  address.value = `${mainPinRect.x - bodyRect.x + mainPinOffsetX} ${mainPinRect.y - bodyRect.y + mainPinOffsetY}`;
+};
+
+mainPin.addEventListener('mousedown', function (evt) {
+  if (evt.button === 0) {
+    makeMapActive();
+  }
+});
+
+mainPin.addEventListener('keydown', function (evt) {
+  if (evt.key === 'Enter') {
+    makeMapActive();
+  }
+});
+
+// Валидация формы
+let inputTitle = adForm.querySelector('#title');
+let inputRooms = adForm.querySelector('#room_number');
+let inputCapacity = adForm.querySelector('#capacity');
+let inputPrice = adForm.querySelector('#price');
+
+inputTitle.addEventListener('input', function () {
+  const MIN_TITLE_LENGTH = 30;
+  const MAX_TITLE_LENGTH = 100;
+  let titleLength = inputTitle.value.length;
+
+  if (titleLength < MIN_TITLE_LENGTH) {
+    inputTitle.setCustomValidity('Заголовок должен быть от 30 символов');
+  } else if (titleLength > MAX_TITLE_LENGTH) {
+    inputTitle.setCustomValidity('Заголовок должен быть до 100 символов');
+  } else {
+    inputTitle.setCustomValidity('');
+  }
+});
+
+// console.log(inputRooms);
+// console.log(inputRooms.options[inputRooms.selectedIndex]);
+// console.log(inputRooms.options[inputRooms.selectedIndex].value);
+// console.log(inputRooms.value);
+// console.log(inputCapacity);
+// console.log(inputCapacity.value);
+
+// JavaScript'ом привожу форму в норм состояние
+if (inputRooms.value === '1') {
+  inputCapacity.options[0].disabled = true;
+  inputCapacity.options[1].disabled = true;
+  inputCapacity.options[2].selected = true;
+  inputCapacity.options[3].disabled = true;
+}
+
+// А тут уже фильтрую варианты
+inputRooms.addEventListener('input', function () {
+  if (inputRooms.value === '1') {
+    inputCapacity.options[0].disabled = true;
+    inputCapacity.options[1].disabled = true;
+    inputCapacity.options[2].disabled = false;
+    inputCapacity.options[2].selected = true;
+    inputCapacity.options[3].disabled = true;
+  }
+
+  if (inputRooms.value === '2') {
+    inputCapacity.options[0].disabled = true;
+    inputCapacity.options[1].disabled = false;
+    inputCapacity.options[2].disabled = false;
+    inputCapacity.options[2].selected = true;
+    inputCapacity.options[3].disabled = true;
+  }
+
+  if (inputRooms.value === '3') {
+    inputCapacity.options[0].disabled = false;
+    inputCapacity.options[1].disabled = false;
+    inputCapacity.options[2].disabled = false;
+    inputCapacity.options[2].selected = true;
+    inputCapacity.options[3].disabled = true;
+  }
+
+  if (inputRooms.value === '100') {
+    inputCapacity.options[0].disabled = true;
+    inputCapacity.options[1].disabled = true;
+    inputCapacity.options[2].disabled = true;
+    inputCapacity.options[3].disabled = false;
+    inputCapacity.options[3].selected = true;
+  }
+});
+
+inputPrice.addEventListener('input', function () {
+  if (inputPrice.value.length === 0) {
+    inputPrice.setCustomValidity('Укажите цену');
+    return false;
+  }
+
+  if (inputPrice.value > 1000000) {
+    inputPrice.setCustomValidity('Цена должна быть меньше 1.000.000');
+    return false;
+  }
+  return inputPrice.setCustomValidity('');
+});
+
+// adForm.addEventListener('submit', function (evt) {
+
+// });
+
+// devElement координаты клика по карте проверяю
+// document.addEventListener('click', function (evt) {
+//   console.log(evt.pageX);
+//   console.log(evt.pageY);
+// });
