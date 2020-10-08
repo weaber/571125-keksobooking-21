@@ -87,41 +87,6 @@
     }
   });
 
-  // А тут уже фильтрую варианты
-  // inputRooms.addEventListener(`input`, function () {
-  //   if (inputRooms.value === `1`) {
-  //     inputCapacity.options[0].disabled = true;
-  //     inputCapacity.options[1].disabled = true;
-  //     inputCapacity.options[2].disabled = false;
-  //     inputCapacity.options[2].selected = true;
-  //     inputCapacity.options[3].disabled = true;
-  //   }
-
-  //   if (inputRooms.value === `2`) {
-  //     inputCapacity.options[0].disabled = true;
-  //     inputCapacity.options[1].disabled = false;
-  //     inputCapacity.options[2].disabled = false;
-  //     inputCapacity.options[2].selected = true;
-  //     inputCapacity.options[3].disabled = true;
-  //   }
-
-  //   if (inputRooms.value === `3`) {
-  //     inputCapacity.options[0].disabled = false;
-  //     inputCapacity.options[1].disabled = false;
-  //     inputCapacity.options[2].disabled = false;
-  //     inputCapacity.options[2].selected = true;
-  //     inputCapacity.options[3].disabled = true;
-  //   }
-
-  //   if (inputRooms.value === `100`) {
-  //     inputCapacity.options[0].disabled = true;
-  //     inputCapacity.options[1].disabled = true;
-  //     inputCapacity.options[2].disabled = true;
-  //     inputCapacity.options[3].disabled = false;
-  //     inputCapacity.options[3].selected = true;
-  //   }
-  // });
-
   inputPrice.addEventListener(`input`, function () {
     if (inputPrice.value.length === 0) {
       inputPrice.setCustomValidity(`Укажите цену`);
