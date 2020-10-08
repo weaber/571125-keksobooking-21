@@ -68,40 +68,59 @@
     inputCapacity.options[3].disabled = true;
   }
 
-  // А тут уже фильтрую варианты
-  inputRooms.addEventListener(`input`, function () {
-    if (inputRooms.value === `1`) {
-      inputCapacity.options[0].disabled = true;
-      inputCapacity.options[1].disabled = true;
-      inputCapacity.options[2].disabled = false;
-      inputCapacity.options[2].selected = true;
-      inputCapacity.options[3].disabled = true;
-    }
+  inputRooms.addEventListener(`input`, function (evt) {
+    for (let i = 0; i < inputCapacity.options.length; i++) {
+      const capacityOption = inputCapacity.options[i];
+      const roomOptionValue = Number(evt.target.value);
+      const capacityOptionValue = Number(capacityOption.value);
 
-    if (inputRooms.value === `2`) {
-      inputCapacity.options[0].disabled = true;
-      inputCapacity.options[1].disabled = false;
-      inputCapacity.options[2].disabled = false;
-      inputCapacity.options[2].selected = true;
-      inputCapacity.options[3].disabled = true;
-    }
+      const isOptionDisabled = roomOptionValue === 100
+        ? capacityOptionValue !== 0
+        : capacityOptionValue > roomOptionValue || capacityOptionValue === 0;
 
-    if (inputRooms.value === `3`) {
-      inputCapacity.options[0].disabled = false;
-      inputCapacity.options[1].disabled = false;
-      inputCapacity.options[2].disabled = false;
-      inputCapacity.options[2].selected = true;
-      inputCapacity.options[3].disabled = true;
-    }
+      const isOptionSelected = roomOptionValue === 100
+        ? capacityOptionValue === 0
+        : roomOptionValue === capacityOptionValue;
 
-    if (inputRooms.value === `100`) {
-      inputCapacity.options[0].disabled = true;
-      inputCapacity.options[1].disabled = true;
-      inputCapacity.options[2].disabled = true;
-      inputCapacity.options[3].disabled = false;
-      inputCapacity.options[3].selected = true;
+      capacityOption.disabled = isOptionDisabled;
+      capacityOption.selected = isOptionSelected;
     }
   });
+
+  // А тут уже фильтрую варианты
+  // inputRooms.addEventListener(`input`, function () {
+  //   if (inputRooms.value === `1`) {
+  //     inputCapacity.options[0].disabled = true;
+  //     inputCapacity.options[1].disabled = true;
+  //     inputCapacity.options[2].disabled = false;
+  //     inputCapacity.options[2].selected = true;
+  //     inputCapacity.options[3].disabled = true;
+  //   }
+
+  //   if (inputRooms.value === `2`) {
+  //     inputCapacity.options[0].disabled = true;
+  //     inputCapacity.options[1].disabled = false;
+  //     inputCapacity.options[2].disabled = false;
+  //     inputCapacity.options[2].selected = true;
+  //     inputCapacity.options[3].disabled = true;
+  //   }
+
+  //   if (inputRooms.value === `3`) {
+  //     inputCapacity.options[0].disabled = false;
+  //     inputCapacity.options[1].disabled = false;
+  //     inputCapacity.options[2].disabled = false;
+  //     inputCapacity.options[2].selected = true;
+  //     inputCapacity.options[3].disabled = true;
+  //   }
+
+  //   if (inputRooms.value === `100`) {
+  //     inputCapacity.options[0].disabled = true;
+  //     inputCapacity.options[1].disabled = true;
+  //     inputCapacity.options[2].disabled = true;
+  //     inputCapacity.options[3].disabled = false;
+  //     inputCapacity.options[3].selected = true;
+  //   }
+  // });
 
   inputPrice.addEventListener(`input`, function () {
     if (inputPrice.value.length === 0) {
