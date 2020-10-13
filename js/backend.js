@@ -3,7 +3,7 @@
   const URL = `https://21.javascript.pages.academy/keksobooking/data`;
 
   window.backend = {
-    download(onSuccess, onError) {
+    getBookingOffers(onSuccess, onError) {
       let xhr = new XMLHttpRequest();
       xhr.responseType = `json`;
       xhr.open(`GET`, URL);

@@ -19,16 +19,21 @@
   };
 
   const errorHandler = function (errorMessage) {
-    const node = document.createElement(`div`);
-    node.style = `z-index: 100; margin: 0 auto; text-align: center; background-color: red;`;
-    node.style.position = `absolute`;
-    node.style.left = 0;
-    node.style.right = 0;
-    node.style.fontSize = `30px`;
+    const errorContainerElement = document.createElement(`div`);
+    errorContainerElement.style = `
+    z-index: 100;
+    margin: 0 auto;
+    text-align: center;
+    background-color: red;
+    position: absolute;
+    left: 0;
+    right: 0;
+    font-size: 30px;
+    `;
 
-    node.textContent = errorMessage;
-    document.body.insertAdjacentElement(`afterbegin`, node);
+    errorContainerElement.textContent = errorMessage;
+    document.body.insertAdjacentElement(`afterbegin`, errorContainerElement);
   };
 
-  window.backend.download(successHandler, errorHandler);
+  window.backend.getBookingOffers(successHandler, errorHandler);
 })();
