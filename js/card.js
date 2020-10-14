@@ -2,10 +2,16 @@
 
 (function () {
   let templateCard = document.querySelector(`#card`).content.querySelector(`.map__card`);
+  let cardBlockElement = document.querySelector(`.map`);
+  let beforeBlock = document.querySelector(`.map__filters-container`);
+  let card;
 
   // Заполняем шаблон #card
-  window.generateCard = function (ad) {
-    let card = templateCard.cloneNode(true);
+  window.renderCard = function (ad) {
+    if (card) {
+      card.remove();
+    }
+    card = templateCard.cloneNode(true);
 
     let cardTitleElement = card.querySelector(`.popup__title`);
     let cardAddressElement = card.querySelector(`.popup__text--address`);
@@ -41,6 +47,13 @@
     //       'features': 'Фишки',
     //       'description': 'Описание',
     //       'fotos': 'Фотографии'
+    //     },
+    //     'location':
+    //     {
+    //       'x': 'Координата X',
+    //       'y': 'Координата Y'
+    //     }
+    //   };
 
     const hideCardElement = function (adData, cardElement) {
       if (!adData) {
@@ -70,7 +83,6 @@
     cardDescriptionElement.textContent = ad.offer.description;
     cardAvatarElement.setAttribute(`src`, ad.author.avatar);
 
-
     // FEATURES - решаю задачу в лоб, ищу контейнер ul, очищаю и создаю новые li записывая им нужные классы.
     // Очищаю список
     cardFeaturesElement.innerHTML = ``;
@@ -93,6 +105,18 @@
       cardPhotosElement.appendChild(newPhoto);
     }
 
-    return card;
+    const popupCloseButton = card.querySelector(`.popup__close`);
+
+    popupCloseButton.addEventListener(`click`, function () {
+      card.remove();
+    });
+
+    document.addEventListener(`keydown`, function (evt) {
+      if (evt.key === `Escape`) {
+        card.remove();
+      }
+    });
+
+    cardBlockElement.insertBefore(card, beforeBlock);
   };
 })();

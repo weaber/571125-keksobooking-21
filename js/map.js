@@ -1,21 +1,24 @@
 'use strict';
 
 (function () {
-  const successHandler = function (adCollection) {
+  const map = document.querySelector(`.map`);
+  const adForm = document.querySelector(`.ad-form`);
+  const address = adForm.querySelector(`#address`);
+  const mainPin = document.querySelector(`.map__pin--main`);
+
+  const renderPin = function (data) {
     // Генерация кнопок
     let mapPinsElement = document.querySelector(`.map__pins`); // Сюда будем добавлять фрагмент составленный из #pin
     let pinsFragment = document.createDocumentFragment(); // Создал фрагмент
 
-    for (let i = 0; i < adCollection.length; i++) {
-      pinsFragment.appendChild(window.generatePin(adCollection[i]));
+    for (let i = 0; i < data.length; i++) {
+      pinsFragment.appendChild(window.generatePin(data[i]));
     }
     mapPinsElement.appendChild(pinsFragment);
+  };
 
-    // Генерация карточки объявления
-    let newCard = window.generateCard(adCollection[0]);
-    let cardBlockElement = document.querySelector(`.map`);
-    let beforeBlock = cardBlockElement.querySelector(`.map__filters-container`);
-    cardBlockElement.insertBefore(newCard, beforeBlock);
+  const successHandler = function (adCollection) {
+    renderPin(adCollection);
   };
 
   const errorHandler = function (errorMessage) {
@@ -35,5 +38,18 @@
     document.body.insertAdjacentElement(`afterbegin`, errorContainerElement);
   };
 
-  window.backend.getBookingOffers(successHandler, errorHandler);
+  window.makeMapActive = function () {
+    map.classList.remove(`map--faded`);
+    adForm.classList.remove(`ad-form--disabled`);
+    const bodyRect = document.body.getBoundingClientRect();
+    const mainPinRect = mainPin.getBoundingClientRect();
+    // или вообще тут правда размеры метки взять с размеров элементов разметки и отсупы вычислить?
+    const mainPinOffsetX = 32;
+    const mainPinOffsetY = 44;
+    window.enableForm();
+    address.value = `${mainPinRect.x - bodyRect.x + mainPinOffsetX} ${mainPinRect.y - bodyRect.y + mainPinOffsetY}`;
+    window.backend.getBookingOffers(successHandler, errorHandler);
+  };
+
+  // window.backend.getBookingOffers(successHandler, errorHandler);
 })();
