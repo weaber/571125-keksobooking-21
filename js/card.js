@@ -107,9 +107,7 @@
 
     const popupCloseButton = card.querySelector(`.popup__close`);
 
-    popupCloseButton.addEventListener(`click`, function () {
-      card.remove();
-    });
+    popupCloseButton.addEventListener(`click`, card.remove.bind(card));
 
     document.addEventListener(`keydown`, function (evt) {
       if (evt.key === `Escape`) {

@@ -50,6 +50,4 @@
     address.value = `${mainPinRect.x - bodyRect.x + mainPinOffsetX} ${mainPinRect.y - bodyRect.y + mainPinOffsetY}`;
     window.backend.getBookingOffers(successHandler, errorHandler);
   };
-
-  // window.backend.getBookingOffers(successHandler, errorHandler);
 })();

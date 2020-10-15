@@ -20,7 +20,7 @@
   let inputTitle = adForm.querySelector(`#title`);
   let inputRooms = adForm.querySelector(`#room_number`);
   let inputCapacity = adForm.querySelector(`#capacity`);
-  let inputPrice = adForm.querySelector(`#price`);
+  let offerPriceInputElement = adForm.querySelector(`#price`);
 
   inputTitle.addEventListener(`input`, function () {
     const MIN_TITLE_LENGTH = 30;
@@ -63,7 +63,7 @@
     }
   });
 
-  let inputType = adForm.querySelector(`#type`);
+  let offerHouseTypeSelectElement = adForm.querySelector(`#type`);
 
   const cardTypesAndPricesMap = {
     flat: `1000`,
@@ -72,27 +72,33 @@
     palace: `10000`
   };
 
-  inputPrice.addEventListener(`input`, function () {
-    if (inputPrice.value.length === 0) {
-      inputPrice.setCustomValidity(`Укажите цену`);
+  offerPriceInputElement.addEventListener(`input`, function () {
+    if (offerPriceInputElement.value.length === 0) {
+      offerPriceInputElement.setCustomValidity(`Укажите цену`);
       return false;
     }
 
-    if (inputPrice.value > 1000000) {
-      inputPrice.setCustomValidity(`Цена должна быть меньше 1.000.000`);
+    if (offerPriceInputElement.value > 1000000) {
+      offerPriceInputElement.setCustomValidity(`Цена должна быть меньше 1.000.000`);
       return false;
     }
 
-    if (inputPrice.value < Number(cardTypesAndPricesMap[inputType.value])) {
-      inputPrice.setCustomValidity(`Цена должна быть больше ${Number(cardTypesAndPricesMap[inputType.value])}`);
-      return false;
-    }
-    return inputPrice.setCustomValidity(``);
+    return offerPriceInputElement.setCustomValidity(``);
   });
 
-  inputType.addEventListener(`change`, function () {
-    inputPrice.setAttribute(`placeholder`, Number(cardTypesAndPricesMap[inputType.value]));
-    // inputPrice.placeholder = Number(cardTypesAndPricesMap[inputType.value]);
+  const validateHouseTypePrice = function () {
+    if (offerPriceInputElement.value < Number(cardTypesAndPricesMap[offerHouseTypeSelectElement.value])) {
+      offerPriceInputElement.setCustomValidity(`Цена должна быть больше ${cardTypesAndPricesMap[offerHouseTypeSelectElement.value]}`);
+      return false;
+    }
+    return offerPriceInputElement.setCustomValidity(``);
+  };
+
+  offerPriceInputElement.addEventListener(`input`, validateHouseTypePrice);
+  offerHouseTypeSelectElement.addEventListener(`input`, validateHouseTypePrice);
+
+  offerHouseTypeSelectElement.addEventListener(`change`, function () {
+    offerPriceInputElement.setAttribute(`placeholder`, Number(cardTypesAndPricesMap[offerHouseTypeSelectElement.value]));
   });
 
   let inputAddress = adForm.querySelector(`#address`);
