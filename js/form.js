@@ -1,50 +1,26 @@
 'use strict';
 
 (function () {
-  // Деактивация формы
-  const map = document.querySelector(`.map`);
   const adForm = document.querySelector(`.ad-form`);
   const fieldsets = adForm.querySelectorAll(`fieldset`);
 
-  for (let fieldset of fieldsets) {
-    fieldset.disabled = true;
-  }
+  window.disableForm = function () {
+    for (let fieldset of fieldsets) {
+      fieldset.disabled = true;
+    }
+  };
 
-  // Активация формы
-  const mainPin = document.querySelector(`.map__pin--main`);
-  const address = adForm.querySelector(`#address`);
-
-  const makeMapActive = function () {
-    map.classList.remove(`map--faded`);
-    adForm.classList.remove(`ad-form--disabled`);
-    const bodyRect = document.body.getBoundingClientRect();
-    const mainPinRect = mainPin.getBoundingClientRect();
-    // или вообще тут правда размеры метки взять с размеров элементов разметки и отсупы вычислить?
-    const mainPinOffsetX = 32;
-    const mainPinOffsetY = 44;
+  window.enableForm = function () {
     for (let fieldset of fieldsets) {
       fieldset.disabled = false;
     }
-    address.value = `${mainPinRect.x - bodyRect.x + mainPinOffsetX} ${mainPinRect.y - bodyRect.y + mainPinOffsetY}`;
   };
-
-  mainPin.addEventListener(`mousedown`, function (evt) {
-    if (evt.button === 0) {
-      makeMapActive();
-    }
-  });
-
-  mainPin.addEventListener(`keydown`, function (evt) {
-    if (evt.key === `Enter`) {
-      makeMapActive();
-    }
-  });
 
   // Валидация формы
   let inputTitle = adForm.querySelector(`#title`);
   let inputRooms = adForm.querySelector(`#room_number`);
   let inputCapacity = adForm.querySelector(`#capacity`);
-  let inputPrice = adForm.querySelector(`#price`);
+  let offerPriceInputElement = adForm.querySelector(`#price`);
 
   inputTitle.addEventListener(`input`, function () {
     const MIN_TITLE_LENGTH = 30;
@@ -87,16 +63,62 @@
     }
   });
 
-  inputPrice.addEventListener(`input`, function () {
-    if (inputPrice.value.length === 0) {
-      inputPrice.setCustomValidity(`Укажите цену`);
+  let offerHouseTypeSelectElement = adForm.querySelector(`#type`);
+
+  const cardTypesAndPricesMap = {
+    flat: `1000`,
+    bungalow: `0`,
+    house: `5000`,
+    palace: `10000`
+  };
+
+  offerPriceInputElement.addEventListener(`input`, function () {
+    if (offerPriceInputElement.value.length === 0) {
+      offerPriceInputElement.setCustomValidity(`Укажите цену`);
       return false;
     }
 
-    if (inputPrice.value > 1000000) {
-      inputPrice.setCustomValidity(`Цена должна быть меньше 1.000.000`);
+    if (offerPriceInputElement.value > 1000000) {
+      offerPriceInputElement.setCustomValidity(`Цена должна быть меньше 1.000.000`);
       return false;
     }
-    return inputPrice.setCustomValidity(``);
+
+    return offerPriceInputElement.setCustomValidity(``);
   });
+
+  const validateHouseTypePrice = function () {
+    if (offerPriceInputElement.value < Number(cardTypesAndPricesMap[offerHouseTypeSelectElement.value])) {
+      offerPriceInputElement.setCustomValidity(`Цена должна быть больше ${cardTypesAndPricesMap[offerHouseTypeSelectElement.value]}`);
+      return false;
+    }
+    return offerPriceInputElement.setCustomValidity(``);
+  };
+
+  offerPriceInputElement.addEventListener(`input`, validateHouseTypePrice);
+  offerHouseTypeSelectElement.addEventListener(`input`, validateHouseTypePrice);
+
+  offerHouseTypeSelectElement.addEventListener(`change`, function () {
+    offerPriceInputElement.setAttribute(`placeholder`, Number(cardTypesAndPricesMap[offerHouseTypeSelectElement.value]));
+  });
+
+  let inputAddress = adForm.querySelector(`#address`);
+  inputAddress.readOnly = true;
+  inputAddress.required = true;
+
+  let inputCheckin = adForm.querySelector(`#timein`);
+  let inputCheckout = adForm.querySelector(`#timeout`);
+
+  inputCheckin.addEventListener(`change`, function () {
+    inputCheckout.value = inputCheckin.value;
+  });
+
+  inputCheckout.addEventListener(`change`, function () {
+    inputCheckin.value = inputCheckout.value;
+  });
+
+  let inputAvatar = adForm.querySelector(`#avatar`);
+  inputAvatar.accept = `image/png, image/jpeg`;
+  let inputImages = adForm.querySelector(`#images`);
+  inputImages.accept = `image/png, image/jpeg`;
+
 })();
