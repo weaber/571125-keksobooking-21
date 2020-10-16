@@ -69,7 +69,8 @@
 
   mainPin.addEventListener(`keydown`, function (evt) {
     if (evt.key === `Enter`) {
-      window.makeMapActive();
+      window.map.activateMap();
+      window.form.enableForm();
     }
   });
 
