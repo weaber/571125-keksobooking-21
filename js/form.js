@@ -4,13 +4,15 @@
   const adForm = document.querySelector(`.ad-form`);
   const fieldsets = adForm.querySelectorAll(`fieldset`);
 
-  window.disableForm = function () {
+  const disableForm = function () {
+    adForm.classList.add(`ad-form--disabled`);
     for (let fieldset of fieldsets) {
       fieldset.disabled = true;
     }
   };
 
-  window.enableForm = function () {
+  const enableForm = function () {
+    adForm.classList.remove(`ad-form--disabled`);
     for (let fieldset of fieldsets) {
       fieldset.disabled = false;
     }
@@ -72,7 +74,7 @@
     palace: `10000`
   };
 
-  offerPriceInputElement.addEventListener(`input`, function () {
+  const validateHouseTypePrice = function () {
     if (offerPriceInputElement.value.length === 0) {
       offerPriceInputElement.setCustomValidity(`Укажите цену`);
       return false;
@@ -83,10 +85,6 @@
       return false;
     }
 
-    return offerPriceInputElement.setCustomValidity(``);
-  });
-
-  const validateHouseTypePrice = function () {
     if (offerPriceInputElement.value < Number(cardTypesAndPricesMap[offerHouseTypeSelectElement.value])) {
       offerPriceInputElement.setCustomValidity(`Цена должна быть больше ${cardTypesAndPricesMap[offerHouseTypeSelectElement.value]}`);
       return false;
@@ -95,7 +93,7 @@
   };
 
   offerPriceInputElement.addEventListener(`input`, validateHouseTypePrice);
-  offerHouseTypeSelectElement.addEventListener(`input`, validateHouseTypePrice);
+  offerHouseTypeSelectElement.addEventListener(`change`, validateHouseTypePrice);
 
   offerHouseTypeSelectElement.addEventListener(`change`, function () {
     offerPriceInputElement.setAttribute(`placeholder`, Number(cardTypesAndPricesMap[offerHouseTypeSelectElement.value]));
@@ -120,5 +118,10 @@
   inputAvatar.accept = `image/png, image/jpeg`;
   let inputImages = adForm.querySelector(`#images`);
   inputImages.accept = `image/png, image/jpeg`;
+
+  window.form = {
+    disableForm,
+    enableForm
+  };
 
 })();

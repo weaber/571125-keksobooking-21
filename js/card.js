@@ -6,8 +6,7 @@
   let beforeBlock = document.querySelector(`.map__filters-container`);
   let card;
 
-  // Заполняем шаблон #card
-  window.renderCard = function (ad) {
+  const renderCard = function (ad) {
     if (card) {
       card.remove();
     }
@@ -116,5 +115,9 @@
     });
 
     cardBlockElement.insertBefore(card, beforeBlock);
+  };
+
+  window.card = {
+    renderCard
   };
 })();
