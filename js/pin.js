@@ -15,6 +15,7 @@
     //  style="left: {{location.x + смещение по X}}px; top: {{location.y + смещение по Y}}px;"  map__pin 50 на 70, значит смещение -25 по Х и -70 по Y
 
     pin.addEventListener(`click`, function () {
+      pin.classList.add(`map__pin--active`);
       window.card.renderCard(ad);
     });
 

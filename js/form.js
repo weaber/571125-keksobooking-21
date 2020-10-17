@@ -119,6 +119,37 @@
   let inputImages = adForm.querySelector(`#images`);
   inputImages.accept = `image/png, image/jpeg`;
 
+  // adFormSubmitHandler
+  const templateSuccessMessageElement = document.querySelector(`#success`).content.querySelector(`div`);
+  const templateErrorMessageElement = document.querySelector(`#error`).content.querySelector(`div`);
+  const main = document.querySelector(`main`);
+
+  const successHandler = function () {
+    const successMessageElement = templateSuccessMessageElement.cloneNode(true);
+    main.insertAdjacentElement(`afterbegin`, successMessageElement);
+    window.map.deactivateMap();
+    window.map.disableMapFilters();
+    window.form.disableForm();
+    adForm.reset();
+    document.addEventListener(`click`, function () {
+      document.querySelector(`.success`).remove();
+    });
+  };
+
+  const errorHandler = function () {
+    const errorMessageElement = templateErrorMessageElement.cloneNode(true);
+    errorMessageElement.querySelector(`button`).addEventListener(`click`, function () {
+      document.querySelector(`.error`).remove();
+    });
+    main.insertAdjacentElement(`afterbegin`, errorMessageElement);
+
+  };
+
+  adForm.addEventListener(`submit`, function (evt) {
+    window.backend.sendNewBookingOffer(new FormData(adForm), successHandler, errorHandler);
+    evt.preventDefault();
+  });
+
   window.form = {
     disableForm,
     enableForm

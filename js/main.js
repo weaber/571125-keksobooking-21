@@ -7,7 +7,9 @@
   const inputAddress = adForm.querySelector(`#address`);
 
   window.map.deactivateMap();
+  window.map.disableMapFilters();
   window.form.disableForm();
+
   mainPin.addEventListener(`mousedown`, function (evt) {
     if (evt.button === 0) {
       window.card.removeCard();
@@ -55,6 +57,7 @@
   mainPin.addEventListener(`keydown`, function (evt) {
     if (evt.key === `Enter`) {
       window.map.activateMap();
+      window.map.enableMapFilters();
       window.form.enableForm();
     }
   });

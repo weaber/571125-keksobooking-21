@@ -6,10 +6,14 @@
   let beforeBlock = document.querySelector(`.map__filters-container`);
   let card;
 
-  const renderCard = function (ad) {
+  const removeCard = function () {
     if (card) {
       card.remove();
     }
+  };
+
+  const renderCard = function (ad) {
+    removeCard();
     card = templateCard.cloneNode(true);
 
     let cardTitleElement = card.querySelector(`.popup__title`);
@@ -118,6 +122,7 @@
   };
 
   window.card = {
+    removeCard,
     renderCard
   };
 })();
