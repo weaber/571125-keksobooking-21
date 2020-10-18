@@ -10,19 +10,14 @@
   window.form.disableForm();
   mainPin.addEventListener(`mousedown`, function (evt) {
     if (evt.button === 0) {
-      window.map.activateMap();
-      window.form.enableForm();
+      window.card.removeCard();
 
       let startCoords = {
         x: evt.clientX,
         y: evt.clientY
       };
 
-      let dragged = false;
-
       const onMouseMove = function (moveEvt) {
-        moveEvt.preventDefault();
-        dragged = true;
         let shift = {
           x: startCoords.x - moveEvt.clientX,
           y: startCoords.y - moveEvt.clientY
@@ -47,19 +42,9 @@
         inputAddress.value = `${mainPinnewX} ${mainPinNewY}`;
       };
 
-      const onMouseUp = function (upEvt) {
-        upEvt.preventDefault();
-
+      const onMouseUp = function () {
         document.removeEventListener(`mousemove`, onMouseMove);
         document.removeEventListener(`mouseup`, onMouseUp);
-
-        if (dragged) {
-          let onClickPreventDefault = function (clickEvt) {
-            clickEvt.preventDefault();
-            mainPin.removeEventListener(`click`, onClickPreventDefault);
-          };
-          mainPin.addEventListener(`click`, onClickPreventDefault);
-        }
       };
 
       document.addEventListener(`mousemove`, onMouseMove);
