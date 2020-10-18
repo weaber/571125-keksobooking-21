@@ -5,14 +5,14 @@
   const adForm = document.querySelector(`.ad-form`);
   const address = adForm.querySelector(`#address`);
   const mainPin = document.querySelector(`.map__pin--main`);
+  const mainPinStartX = 570;
+  const mainPinStartY = 375;
 
   const renderPin = function (data) {
-    // Генерация кнопок
     let mapPinsElement = document.querySelector(`.map__pins`); // Сюда будем добавлять фрагмент составленный из #pin
     let pinsFragment = document.createDocumentFragment(); // Создал фрагмент
-
     for (let i = 0; i < data.length; i++) {
-      pinsFragment.appendChild(window.generatePin(data[i]));
+      pinsFragment.appendChild(window.pin.generatePin(data[i]));
     }
     mapPinsElement.appendChild(pinsFragment);
   };
@@ -33,21 +33,25 @@
     right: 0;
     font-size: 30px;
     `;
-
     errorContainerElement.textContent = errorMessage;
     document.body.insertAdjacentElement(`afterbegin`, errorContainerElement);
   };
 
-  window.makeMapActive = function () {
+  const activateMap = function () {
     map.classList.remove(`map--faded`);
-    adForm.classList.remove(`ad-form--disabled`);
-    const bodyRect = document.body.getBoundingClientRect();
-    const mainPinRect = mainPin.getBoundingClientRect();
-    // или вообще тут правда размеры метки взять с размеров элементов разметки и отсупы вычислить?
-    const mainPinOffsetX = 32;
-    const mainPinOffsetY = 44;
-    window.enableForm();
-    address.value = `${mainPinRect.x - bodyRect.x + mainPinOffsetX} ${mainPinRect.y - bodyRect.y + mainPinOffsetY}`;
+    address.value = `${Math.round(mainPin.offsetLeft + mainPin.offsetWidth / 2)} ${Math.round(mainPin.offsetTop + mainPin.offsetHeight)}`;
     window.backend.getBookingOffers(successHandler, errorHandler);
+  };
+
+  const deactivateMap = function () {
+    map.classList.add(`map--faded`);
+    mainPin.style.left = `${mainPinStartX}px`;
+    mainPin.style.top = `${mainPinStartY}px`;
+    address.value = `${Math.round(mainPinStartX + mainPin.offsetWidth / 2)} ${Math.round(mainPinStartY + mainPin.offsetHeight / 2)}`;
+  };
+
+  window.map = {
+    activateMap,
+    deactivateMap
   };
 })();
