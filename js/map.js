@@ -11,8 +11,15 @@
   const mainPinStartX = 570;
   const mainPinStartY = 375;
 
-  let mapPinsElement = document.querySelector(`.map__pins`); // Сюда будем добавлять фрагмент составленный из #pin
-  let pinsFragment = document.createDocumentFragment(); // Создал фрагмент
+  let mapPinsElement = document.querySelector(`.map__pins`);
+  let pinsFragment = document.createDocumentFragment();
+
+  const mainPinFirstClickHandler = function () {
+    window.map.activateMap();
+    window.map.enableMapFilters();
+    window.form.enableForm();
+    mainPin.removeEventListener(`mousedown`, mainPinFirstClickHandler);
+  };
 
   const renderPin = function (data) {
     for (let i = 0; i < data.length; i++) {
@@ -21,9 +28,12 @@
     mapPinsElement.appendChild(pinsFragment);
   };
 
-  // const removePins = function () {
-
-  // };
+  const removePins = function () {
+    const mapPinsContainerElement = document.querySelector(`.map__pins`);
+    for (let i = mapPinsContainerElement.children.length - 1; i > 1; i--) {
+      mapPinsContainerElement.children[i].remove();
+    }
+  };
 
   const successHandler = function (adCollection) {
     renderPin(adCollection);
@@ -52,12 +62,13 @@
   };
 
   const deactivateMap = function () {
-    // removePins();
+    removePins();
     window.card.removeCard();
     map.classList.add(`map--faded`);
     mainPin.style.left = `${mainPinStartX}px`;
     mainPin.style.top = `${mainPinStartY}px`;
     address.value = `${Math.round(mainPinStartX + mainPin.offsetWidth / 2)} ${Math.round(mainPinStartY + mainPin.offsetHeight / 2)}`;
+    mainPin.addEventListener(`mousedown`, mainPinFirstClickHandler);
   };
 
   const disableMapFilters = function () {

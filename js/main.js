@@ -6,12 +6,9 @@
   const adForm = document.querySelector(`.ad-form`);
   const inputAddress = adForm.querySelector(`#address`);
 
-  window.map.deactivateMap();
-  window.map.disableMapFilters();
-  window.form.disableForm();
-
-  mainPin.addEventListener(`mousedown`, function (evt) {
+  const mainPinMoveHandler = function (evt) {
     if (evt.button === 0) {
+      window.pin.removeClassActive();
       window.card.removeCard();
 
       let startCoords = {
@@ -52,7 +49,13 @@
       document.addEventListener(`mousemove`, onMouseMove);
       document.addEventListener(`mouseup`, onMouseUp);
     }
-  });
+  };
+
+  window.map.deactivateMap();
+  window.map.disableMapFilters();
+  window.form.disableForm();
+
+  mainPin.addEventListener(`mousedown`, mainPinMoveHandler);
 
   mainPin.addEventListener(`keydown`, function (evt) {
     if (evt.key === `Enter`) {
