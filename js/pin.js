@@ -38,6 +38,5 @@
   window.pin = {
     removeClassActive,
     generatePin
-
   };
 })();

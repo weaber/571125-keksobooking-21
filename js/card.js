@@ -12,6 +12,12 @@
     }
   };
 
+  const cardCloseButtonHandler = function () {
+    if (card) {
+      card.remove();
+    }
+  };
+
   const renderCard = function (ad) {
     removeCard();
     card = templateCard.cloneNode(true);
@@ -102,7 +108,7 @@
     }
 
     const popupCloseButton = card.querySelector(`.popup__close`);
-    popupCloseButton.addEventListener(`click`, removeCard);
+    popupCloseButton.addEventListener(`click`, cardCloseButtonHandler);
     document.addEventListener(`keydown`, function (evt) {
       if (evt.key === `Escape`) {
         removeCard();
