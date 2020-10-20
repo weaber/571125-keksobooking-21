@@ -25,26 +25,16 @@
   let offerPriceInputElement = adForm.querySelector(`#price`);
 
   inputTitle.addEventListener(`input`, function () {
-    const MIN_TITLE_LENGTH = 30;
-    const MAX_TITLE_LENGTH = 100;
-    let titleLength = inputTitle.value.length;
-
-    if (titleLength < MIN_TITLE_LENGTH) {
+    if (inputTitle.validity.valueMissing) {
+      inputTitle.setCustomValidity(`Необходимо указать заголовок объявления`);
+    } else if (inputTitle.validity.tooShort) {
       inputTitle.setCustomValidity(`Заголовок должен быть от 30 символов`);
-    } else if (titleLength > MAX_TITLE_LENGTH) {
+    } else if (inputTitle.validity.tooLong) {
       inputTitle.setCustomValidity(`Заголовок должен быть до 100 символов`);
     } else {
       inputTitle.setCustomValidity(``);
     }
   });
-
-  // JavaScript'ом привожу форму в норм состояние
-  if (inputRooms.value === `1`) {
-    inputCapacity.options[0].disabled = true;
-    inputCapacity.options[1].disabled = true;
-    inputCapacity.options[2].selected = true;
-    inputCapacity.options[3].disabled = true;
-  }
 
   inputRooms.addEventListener(`input`, function (evt) {
     for (let i = 0; i < inputCapacity.options.length; i++) {
@@ -118,6 +108,42 @@
   inputAvatar.accept = `image/png, image/jpeg`;
   let inputImages = adForm.querySelector(`#images`);
   inputImages.accept = `image/png, image/jpeg`;
+
+  // adFormSubmitHandler
+  const templateSuccessMessageElement = document.querySelector(`#success`).content.querySelector(`div`);
+  const templateErrorMessageElement = document.querySelector(`#error`).content.querySelector(`div`);
+  const main = document.querySelector(`main`);
+
+  const successHandler = function () {
+    const successMessageElement = templateSuccessMessageElement.cloneNode(true);
+    main.insertAdjacentElement(`afterbegin`, successMessageElement);
+    window.map.disableMapFilters();
+    window.form.disableForm();
+    adForm.reset();
+    window.map.deactivateMap();
+    document.addEventListener(`click`, function () {
+      document.querySelector(`.success`).remove();
+    });
+    document.addEventListener(`keydown`, function (evt) {
+      if (evt.key === `Escape`) {
+        document.querySelector(`.success`).remove();
+      }
+    });
+  };
+
+  const errorHandler = function () {
+    const errorMessageElement = templateErrorMessageElement.cloneNode(true);
+    errorMessageElement.querySelector(`button`).addEventListener(`click`, function () {
+      document.querySelector(`.error`).remove();
+    });
+    main.insertAdjacentElement(`afterbegin`, errorMessageElement);
+
+  };
+
+  adForm.addEventListener(`submit`, function (evt) {
+    evt.preventDefault();
+    window.backend.sendNewBookingOffer(new FormData(adForm), successHandler, errorHandler);
+  });
 
   window.form = {
     disableForm,

@@ -3,6 +3,13 @@
 (function () {
   const templatePin = document.querySelector(`#pin`).content.querySelector(`.map__pin`);
 
+  const removeClassActive = function () {
+    let activePin = document.querySelector(`.map__pin--active`);
+    if (activePin) {
+      activePin.classList.remove(`map__pin--active`);
+    }
+  };
+
   const generatePin = function (ad) {
     let pin = templatePin.cloneNode(true);
 
@@ -12,9 +19,10 @@
     const pinOffsetY = 70;
 
     pin.setAttribute(`style`, `left: ${(ad.location.x - pinOffsetX)}px; top: ${(ad.location.y - pinOffsetY)}px;`);
-    //  style="left: {{location.x + смещение по X}}px; top: {{location.y + смещение по Y}}px;"  map__pin 50 на 70, значит смещение -25 по Х и -70 по Y
 
     pin.addEventListener(`click`, function () {
+      removeClassActive();
+      pin.classList.add(`map__pin--active`);
       window.card.renderCard(ad);
     });
 
@@ -28,6 +36,7 @@
   };
 
   window.pin = {
+    removeClassActive,
     generatePin
   };
 })();

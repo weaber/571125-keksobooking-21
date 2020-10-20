@@ -6,10 +6,20 @@
   let beforeBlock = document.querySelector(`.map__filters-container`);
   let card;
 
-  const renderCard = function (ad) {
+  const removeCard = function () {
     if (card) {
       card.remove();
     }
+  };
+
+  const cardCloseButtonHandler = function () {
+    if (card) {
+      card.remove();
+    }
+  };
+
+  const renderCard = function (ad) {
+    removeCard();
     card = templateCard.cloneNode(true);
 
     let cardTitleElement = card.querySelector(`.popup__title`);
@@ -82,22 +92,15 @@
     cardDescriptionElement.textContent = ad.offer.description;
     cardAvatarElement.setAttribute(`src`, ad.author.avatar);
 
-    // FEATURES - решаю задачу в лоб, ищу контейнер ul, очищаю и создаю новые li записывая им нужные классы.
-    // Очищаю список
     cardFeaturesElement.innerHTML = ``;
-
-    // Создаю li на основе данных postBox'а и заполняю ими список
     for (let i = 0; i < ad.offer.features.length; i++) {
       let newFeature = document.createElement(`li`);
       newFeature.classList.add(`popup__feature`, `popup__feature--${ad.offer.features[i]}`);
       cardFeaturesElement.appendChild(newFeature);
     }
 
-    // PHOTOS - решаю также в лоб как и с блоком features
     let photo = cardPhotosElement.querySelector(`img`); // это img, я его беру как шаблон
     cardPhotosElement.innerHTML = ``;
-
-    // Заполняю создаю img и заполняю ими div
     for (let i = 0; i < ad.offer.photos.length; i++) {
       let newPhoto = photo.cloneNode(true);
       newPhoto.setAttribute(`src`, ad.offer.photos[i]);
@@ -105,12 +108,10 @@
     }
 
     const popupCloseButton = card.querySelector(`.popup__close`);
-
-    popupCloseButton.addEventListener(`click`, card.remove.bind(card));
-
+    popupCloseButton.addEventListener(`click`, cardCloseButtonHandler);
     document.addEventListener(`keydown`, function (evt) {
       if (evt.key === `Escape`) {
-        card.remove();
+        removeCard();
       }
     });
 
@@ -118,6 +119,7 @@
   };
 
   window.card = {
+    removeCard,
     renderCard
   };
 })();
