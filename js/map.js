@@ -42,7 +42,7 @@
     }
   };
 
-  const mapFiltersChangeHandler = function () {
+  const updatePins = function () {
     removePins();
     window.card.removeCard();
     let filteredAds = [];
@@ -58,10 +58,14 @@
     renderPins(filteredAds);
   };
 
+  const mapFiltersChangeHandler = function () {
+    updatePins();
+  };
+
   const successHandler = function (data) {
     adCollection = data;
     enableMapFilters();
-    mapFiltersChangeHandler();
+    updatePins();
   };
 
   const errorHandler = function (errorMessage) {

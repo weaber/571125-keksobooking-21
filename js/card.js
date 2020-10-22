@@ -13,9 +13,7 @@
   };
 
   const cardCloseButtonHandler = function () {
-    if (card) {
-      card.remove();
-    }
+    removeCard();
   };
 
   const renderCard = function (ad) {
