@@ -4,10 +4,10 @@
   const map = document.querySelector(`.map`);
   const mapFilters = map.querySelector(`.map__filters`);
   const mapFiltersHousingTypeElement = mapFilters.querySelector(`#housing-type`);
-  const mapFiltersHousingPriceElement = mapFilters.querySelector(`#housing-price`);
-  const mapFiltersHousingRoomsElement = mapFilters.querySelector(`#housing-rooms`);
-  const mapFiltersHousingGuestsElement = mapFilters.querySelector(`#housing-guests`);
-  const mapFiltersHousingFeaturesElement = mapFilters.querySelector(`#housing-features`);
+  // const mapFiltersHousingPriceElement = mapFilters.querySelector(`#housing-price`);
+  // const mapFiltersHousingRoomsElement = mapFilters.querySelector(`#housing-rooms`);
+  // const mapFiltersHousingGuestsElement = mapFilters.querySelector(`#housing-guests`);
+  // const mapFiltersHousingFeaturesElement = mapFilters.querySelector(`#housing-features`);
   const mapFiltersSelects = mapFilters.querySelectorAll(`.map__filter`);
   const mapFiltersFeatures = mapFilters.querySelector(`#housing-features`);
   const adForm = document.querySelector(`.ad-form`);
@@ -15,7 +15,7 @@
   const mainPin = document.querySelector(`.map__pin--main`);
   const mainPinStartX = 570;
   const mainPinStartY = 375;
-  const MAX_PIN_AMOUNT = 5;
+  const MAX_PINS_AMOUNT = 5;
   let adCollection = [];
 
   let mapPinsElement = document.querySelector(`.map__pins`);
@@ -28,7 +28,8 @@
   };
 
   const renderPins = function (data) {
-    for (let i = 0; i < MAX_PIN_AMOUNT; i++) {
+    const PINS_AMOUNT = (data.length <= MAX_PINS_AMOUNT) ? data.length : MAX_PINS_AMOUNT;
+    for (let i = 0; i < PINS_AMOUNT; i++) {
       pinsFragment.appendChild(window.pin.generatePin(data[i]));
     }
     mapPinsElement.appendChild(pinsFragment);
@@ -41,43 +42,26 @@
     }
   };
 
-  let housingType = `any`;
-
-  mapFiltersHousingTypeElement.addEventListener(`change`, function () {
-    housingType = mapFiltersHousingTypeElement.value;
-    updateAds();
-  });
-
-  mapFiltersHousingPriceElement.addEventListener(`change`, function () {
-    updateAds();
-  });
-
-  mapFiltersHousingRoomsElement.addEventListener(`change`, function () {
-    updateAds();
-  });
-
-  mapFiltersHousingGuestsElement.addEventListener(`change`, function () {
-    updateAds();
-  });
-
-  mapFiltersHousingFeaturesElement.addEventListener(`change`, function () {
-    updateAds();
-  });
-
-  const updateAds = function () {
+  const mapFiltersChangeHandler = function () {
     removePins();
     window.card.removeCard();
-    const sameHousingType = adCollection.filter(function (ad) {
-      return ad.offer.type === housingType;
-    });
-    const filteredAds = sameHousingType.concat(adCollection);
+    let filteredAds = [];
+
+    if (mapFiltersHousingTypeElement.value === `any`) {
+      filteredAds = adCollection;
+    } else {
+      filteredAds = adCollection.filter(function (ad) {
+        return ad.offer.type === mapFiltersHousingTypeElement.value;
+      });
+    }
+
     renderPins(filteredAds);
   };
 
   const successHandler = function (data) {
     adCollection = data;
     enableMapFilters();
-    updateAds();
+    mapFiltersChangeHandler();
   };
 
   const errorHandler = function (errorMessage) {
@@ -125,6 +109,8 @@
       select.disabled = false;
     }
   };
+
+  mapFilters.addEventListener(`change`, mapFiltersChangeHandler);
 
   window.map = {
     activateMap,
