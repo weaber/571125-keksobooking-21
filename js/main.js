@@ -60,7 +60,6 @@
   mainPin.addEventListener(`keydown`, function (evt) {
     if (evt.key === `Enter`) {
       window.map.activateMap();
-      window.map.enableMapFilters();
       window.form.enableForm();
     }
   });

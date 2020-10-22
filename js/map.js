@@ -16,7 +16,6 @@
 
   const mainPinFirstClickHandler = function () {
     window.map.activateMap();
-    window.map.enableMapFilters();
     window.form.enableForm();
     mainPin.removeEventListener(`mousedown`, mainPinFirstClickHandler);
   };
@@ -36,6 +35,7 @@
   };
 
   const successHandler = function (adCollection) {
+    enableMapFilters();
     renderPin(adCollection);
   };
 
