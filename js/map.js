@@ -71,7 +71,6 @@
       return ad.offer.type === housingType;
     });
     const filteredAds = sameHousingType.concat(adCollection);
-    console.log(filteredAds);
     renderPins(filteredAds);
   };
 
