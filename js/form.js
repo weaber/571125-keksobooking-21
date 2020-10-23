@@ -2,6 +2,7 @@
 
 (function () {
   const adForm = document.querySelector(`.ad-form`);
+  const adFormResetButton = adForm.querySelector(`.ad-form__reset`);
   const fieldsets = adForm.querySelectorAll(`fieldset`);
 
   const disableForm = function () {
@@ -143,6 +144,14 @@
   adForm.addEventListener(`submit`, function (evt) {
     evt.preventDefault();
     window.backend.sendNewBookingOffer(new FormData(adForm), successHandler, errorHandler);
+  });
+
+  adFormResetButton.addEventListener(`click`, function (evt) {
+    evt.preventDefault();
+    window.map.disableMapFilters();
+    window.form.disableForm();
+    adForm.reset();
+    window.map.deactivateMap();
   });
 
   window.form = {
