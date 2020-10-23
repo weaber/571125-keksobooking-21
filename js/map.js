@@ -3,11 +3,6 @@
 (function () {
   const map = document.querySelector(`.map`);
   const mapFilters = map.querySelector(`.map__filters`);
-  const mapFiltersHousingTypeElement = mapFilters.querySelector(`#housing-type`);
-  const mapFiltersHousingPriceElement = mapFilters.querySelector(`#housing-price`);
-  const mapFiltersHousingRoomsElement = mapFilters.querySelector(`#housing-rooms`);
-  const mapFiltersHousingGuestsElement = mapFilters.querySelector(`#housing-guests`);
-  const mapFiltersHousingFeaturesElement = mapFilters.querySelector(`#housing-features`).querySelectorAll(`input`);
   const mapFiltersSelects = mapFilters.querySelectorAll(`.map__filter`);
   const mapFiltersFeatures = mapFilters.querySelector(`#housing-features`);
   const adForm = document.querySelector(`.ad-form`);
@@ -42,54 +37,11 @@
     }
   };
 
-  let filteredAds;
-
-  const filterAds = function () {
-    filteredAds = [];
-    let sampleAd = {
-      type: mapFiltersHousingTypeElement.value,
-      price: mapFiltersHousingPriceElement.value,
-      rooms: mapFiltersHousingRoomsElement.value,
-      guests: mapFiltersHousingGuestsElement.value,
-      features: []
-    };
-
-    for (let i = 0; i < mapFiltersHousingFeaturesElement.length; i++) {
-      if (mapFiltersHousingFeaturesElement[i].checked) {
-        sampleAd.features.push(mapFiltersHousingFeaturesElement[i].value);
-      }
-    }
-
-    let amountOfMatches = 0;
-
-    for (let i = 0; i < adCollection.length; i++) {
-      if (sampleAd.type === `any`) {
-        amountOfMatches++;
-      } else if (sampleAd.type === adCollection[i].offer.type) {
-        amountOfMatches++;
-      }
-
-      if (sampleAd.price === `any`) {
-        amountOfMatches++;
-      } else if ((sampleAd.price === `low`) && (adCollection[i].offer.price < 10000)) {
-        amountOfMatches++;
-      } else if ((sampleAd.price === `middle`) && (adCollection[i].offer.price >= 10000) && (adCollection[i].offer.price <= 50000)) {
-        amountOfMatches++;
-      } else if ((sampleAd.price === `high`) && (adCollection[i].offer.price > 50000)) {
-        amountOfMatches++;
-      }
-
-      if (amountOfMatches === 2) {
-        filteredAds.push(adCollection[i]);
-      }
-      amountOfMatches = 0;
-    }
-  };
-
   const updatePins = function () {
+    const sampleAd = window.filter.getFilterConfig();
+    const filteredAds = window.filter.filterAds(adCollection, sampleAd);
     removePins();
     window.card.removeCard();
-    filterAds();
     renderPins(filteredAds);
   };
 
