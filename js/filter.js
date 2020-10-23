@@ -73,13 +73,13 @@
     };
   };
 
-  const filterAds = function (data, sample) {
+  const filterAds = function (data) {
+    let sample = getFilterConfig();
     const filteredData = data.filter(filterValues(sample));
     return filteredData;
   };
 
   window.filter = {
-    getFilterConfig,
     filterAds
   };
 

@@ -38,8 +38,7 @@
   };
 
   const updatePins = function () {
-    const sampleAd = window.filter.getFilterConfig();
-    const filteredAds = window.filter.filterAds(adCollection, sampleAd);
+    const filteredAds = window.filter.filterAds(adCollection);
     removePins();
     window.card.removeCard();
     renderPins(filteredAds);
