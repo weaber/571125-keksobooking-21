@@ -83,6 +83,7 @@
   };
 
   const disableMapFilters = function () {
+    mapFilters.reset();
     mapFiltersFeatures.disabled = true;
     for (let select of mapFiltersSelects) {
       select.disabled = true;
