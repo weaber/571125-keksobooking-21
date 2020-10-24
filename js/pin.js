@@ -38,6 +38,13 @@
     return pin;
   };
 
+  const mainPinFirstClickHandler = function () {
+    window.map.activateMap();
+    window.form.enableForm();
+    mainPin.removeEventListener(`keydown`, mainPinEnterPressHandler);
+    mainPin.removeEventListener(`mousedown`, mainPinFirstClickHandler);
+  };
+
   const mainPinMoveHandler = function (evt) {
     if (evt.button === 0) {
       removeClassActive();
@@ -61,7 +68,7 @@
 
         let mainPinnewX = mainPin.offsetLeft - shift.x;
         let mainPinNewY = mainPin.offsetTop - shift.y;
-        const mainPinYMin = 130;
+        const mainPinYMin = 130 - mainPin.offsetHeight;
         const mainPinYMax = 630;
 
         if (mainPinnewX > 0 - mainPin.offsetWidth / 2 && mainPinnewX < map.offsetWidth - mainPin.offsetWidth / 2) {
@@ -88,11 +95,13 @@
       window.map.activateMap();
       window.form.enableForm();
     }
+    mainPin.removeEventListener(`keydown`, mainPinEnterPressHandler);
   };
 
   window.pin = {
     removeClassActive,
     generatePin,
+    mainPinFirstClickHandler,
     mainPinMoveHandler,
     mainPinEnterPressHandler
   };

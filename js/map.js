@@ -15,12 +15,6 @@
   const pinsFragment = document.createDocumentFragment();
   let adCollection = [];
 
-  const mainPinFirstClickHandler = function () {
-    window.map.activateMap();
-    window.form.enableForm();
-    mainPin.removeEventListener(`mousedown`, mainPinFirstClickHandler);
-  };
-
   const renderPins = function (data) {
     const PINS_AMOUNT = (data.length <= MAX_PINS_AMOUNT) ? data.length : MAX_PINS_AMOUNT;
     for (let i = 0; i < PINS_AMOUNT; i++) {
@@ -82,7 +76,10 @@
     mainPin.style.left = `${mainPinStartX}px`;
     mainPin.style.top = `${mainPinStartY}px`;
     address.value = `${Math.round(mainPinStartX + mainPin.offsetWidth / 2)} ${Math.round(mainPinStartY + mainPin.offsetHeight / 2)}`;
-    mainPin.addEventListener(`mousedown`, mainPinFirstClickHandler);
+
+    mainPin.addEventListener(`mousedown`, window.pin.mainPinFirstClickHandler);
+    mainPin.addEventListener(`keydown`, window.pin.mainPinEnterPressHandler);
+    mainPin.addEventListener(`mousedown`, window.pin.mainPinMoveHandler);
   };
 
   const disableMapFilters = function () {
