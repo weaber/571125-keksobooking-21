@@ -11,10 +11,9 @@
   const mainPinStartX = 570;
   const mainPinStartY = 375;
   const MAX_PINS_AMOUNT = 5;
+  const mapPinsElement = document.querySelector(`.map__pins`);
+  const pinsFragment = document.createDocumentFragment();
   let adCollection = [];
-
-  let mapPinsElement = document.querySelector(`.map__pins`);
-  let pinsFragment = document.createDocumentFragment();
 
   const mainPinFirstClickHandler = function () {
     window.map.activateMap();

@@ -39,38 +39,7 @@
     }
   };
 
-  inputTitle.addEventListener(`input`, function () {
-    if (inputTitle.validity.valueMissing) {
-      inputTitle.setCustomValidity(`Необходимо указать заголовок объявления`);
-    } else if (inputTitle.validity.tooShort) {
-      inputTitle.setCustomValidity(`Заголовок должен быть от 30 символов`);
-    } else if (inputTitle.validity.tooLong) {
-      inputTitle.setCustomValidity(`Заголовок должен быть до 100 символов`);
-    } else {
-      inputTitle.setCustomValidity(``);
-    }
-  });
-
-  inputRooms.addEventListener(`input`, function (evt) {
-    for (let i = 0; i < inputCapacity.options.length; i++) {
-      const capacityOption = inputCapacity.options[i];
-      const roomOptionValue = Number(evt.target.value);
-      const capacityOptionValue = Number(capacityOption.value);
-
-      const isOptionDisabled = roomOptionValue === 100
-        ? capacityOptionValue !== 0
-        : capacityOptionValue > roomOptionValue || capacityOptionValue === 0;
-
-      const isOptionSelected = roomOptionValue === 100
-        ? capacityOptionValue === 0
-        : roomOptionValue === capacityOptionValue;
-
-      capacityOption.disabled = isOptionDisabled;
-      capacityOption.selected = isOptionSelected;
-    }
-  });
-
-  const validateHouseTypePrice = function () {
+  const houseTypePriceInputHandler = function () {
     if (offerPriceInputElement.value.length === 0) {
       offerPriceInputElement.setCustomValidity(`Укажите цену`);
       return false;
@@ -88,26 +57,48 @@
     return offerPriceInputElement.setCustomValidity(``);
   };
 
-  offerPriceInputElement.addEventListener(`input`, validateHouseTypePrice);
-  offerHouseTypeSelectElement.addEventListener(`change`, validateHouseTypePrice);
+  const titleInputHandler = function () {
+    if (inputTitle.validity.valueMissing) {
+      inputTitle.setCustomValidity(`Необходимо указать заголовок объявления`);
+    } else if (inputTitle.validity.tooShort) {
+      inputTitle.setCustomValidity(`Заголовок должен быть от 30 символов`);
+    } else if (inputTitle.validity.tooLong) {
+      inputTitle.setCustomValidity(`Заголовок должен быть до 100 символов`);
+    } else {
+      inputTitle.setCustomValidity(``);
+    }
+  };
 
-  offerHouseTypeSelectElement.addEventListener(`change`, function () {
+  const roomsInputHandler = function (evt) {
+    for (let i = 0; i < inputCapacity.options.length; i++) {
+      const capacityOption = inputCapacity.options[i];
+      const roomOptionValue = Number(evt.target.value);
+      const capacityOptionValue = Number(capacityOption.value);
+
+      const isOptionDisabled = roomOptionValue === 100
+        ? capacityOptionValue !== 0
+        : capacityOptionValue > roomOptionValue || capacityOptionValue === 0;
+
+      const isOptionSelected = roomOptionValue === 100
+        ? capacityOptionValue === 0
+        : roomOptionValue === capacityOptionValue;
+
+      capacityOption.disabled = isOptionDisabled;
+      capacityOption.selected = isOptionSelected;
+    }
+  };
+
+  const houseTypeChangeHandler = function () {
     offerPriceInputElement.setAttribute(`placeholder`, Number(cardTypesAndPricesMap[offerHouseTypeSelectElement.value]));
-  });
+  };
 
-  inputAddress.readOnly = true;
-  inputAddress.required = true;
-
-  inputCheckin.addEventListener(`change`, function () {
+  const checkinChangeHandler = function () {
     inputCheckout.value = inputCheckin.value;
-  });
+  };
 
-  inputCheckout.addEventListener(`change`, function () {
+  const checkoutChangeHandler = function () {
     inputCheckin.value = inputCheckout.value;
-  });
-
-  inputAvatar.accept = `image/png, image/jpeg`;
-  inputImages.accept = `image/png, image/jpeg`;
+  };
 
   const successMessageElementClickHandler = function () {
     successMessageElement.remove();
@@ -142,18 +133,35 @@
     main.insertAdjacentElement(`afterbegin`, errorMessageElement);
   };
 
-  adForm.addEventListener(`submit`, function (evt) {
+  const adFormSubmitHandler = function (evt) {
     evt.preventDefault();
     window.backend.sendNewBookingOffer(new FormData(adForm), successHandler, errorHandler);
-  });
+  };
 
-  adFormResetButton.addEventListener(`click`, function (evt) {
+  const adFormResetHandler = function (evt) {
     evt.preventDefault();
     window.map.disableMapFilters();
     window.form.disableForm();
     adForm.reset();
     window.map.deactivateMap();
-  });
+  };
+
+  inputAddress.readOnly = true;
+  inputAddress.required = true;
+  inputAvatar.accept = `image/png, image/jpeg`;
+  inputImages.accept = `image/png, image/jpeg`;
+
+  inputTitle.addEventListener(`input`, titleInputHandler);
+  inputRooms.addEventListener(`input`, roomsInputHandler);
+  offerPriceInputElement.addEventListener(`input`, houseTypePriceInputHandler);
+  offerHouseTypeSelectElement.addEventListener(`change`, houseTypePriceInputHandler);
+  offerHouseTypeSelectElement.addEventListener(`change`, houseTypeChangeHandler);
+  inputCheckin.addEventListener(`change`, checkinChangeHandler);
+  inputCheckout.addEventListener(`change`, checkoutChangeHandler);
+
+  adForm.addEventListener(`submit`, adFormSubmitHandler);
+
+  adFormResetButton.addEventListener(`click`, adFormResetHandler);
 
   window.form = {
     disableForm,
