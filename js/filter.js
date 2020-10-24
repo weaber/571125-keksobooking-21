@@ -82,5 +82,4 @@
   window.filter = {
     filterAds
   };
-
 })();

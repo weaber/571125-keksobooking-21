@@ -63,5 +63,4 @@
       window.form.enableForm();
     }
   });
-
 })();

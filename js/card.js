@@ -1,9 +1,9 @@
 'use strict';
 
 (function () {
-  let templateCard = document.querySelector(`#card`).content.querySelector(`.map__card`);
-  let cardBlockElement = document.querySelector(`.map`);
-  let beforeBlock = document.querySelector(`.map__filters-container`);
+  const templateCard = document.querySelector(`#card`).content.querySelector(`.map__card`);
+  const cardBlockElement = document.querySelector(`.map`);
+  const beforeBlock = document.querySelector(`.map__filters-container`);
   let card;
 
   const removeCard = function () {
@@ -12,55 +12,28 @@
     }
   };
 
-  const cardCloseButtonHandler = function () {
-    removeCard();
-  };
-
   const renderCard = function (ad) {
     removeCard();
-    card = templateCard.cloneNode(true);
 
-    let cardTitleElement = card.querySelector(`.popup__title`);
-    let cardAddressElement = card.querySelector(`.popup__text--address`);
-    let cardPriceElement = card.querySelector(`.popup__text--price`);
-    let cardTypeElement = card.querySelector(`.popup__type`);
-    let cardCapacityElement = card.querySelector(`.popup__text--capacity`);
-    let cardTimeElement = card.querySelector(`.popup__text--time`);
-    let cardFeaturesElement = card.querySelector(`.popup__features`);
-    let cardDescriptionElement = card.querySelector(`.popup__description`);
-    let cardPhotosElement = card.querySelector(`.popup__photos`);
-    let cardAvatarElement = card.querySelector(`.popup__avatar`);
+    card = templateCard.cloneNode(true);
+    const popupCloseButton = card.querySelector(`.popup__close`);
+    const cardTitleElement = card.querySelector(`.popup__title`);
+    const cardAddressElement = card.querySelector(`.popup__text--address`);
+    const cardPriceElement = card.querySelector(`.popup__text--price`);
+    const cardTypeElement = card.querySelector(`.popup__type`);
+    const cardCapacityElement = card.querySelector(`.popup__text--capacity`);
+    const cardTimeElement = card.querySelector(`.popup__text--time`);
+    const cardFeaturesElement = card.querySelector(`.popup__features`);
+    const cardDescriptionElement = card.querySelector(`.popup__description`);
+    const cardPhotosElement = card.querySelector(`.popup__photos`);
+    const photo = cardPhotosElement.querySelector(`img`);
+    const cardAvatarElement = card.querySelector(`.popup__avatar`);
     const cardTypesMap = {
       flat: `Квартира`,
       bungalow: `Бунгало`,
       house: `Дом`,
       palace: `Дворец`
     };
-
-    // 'author':
-    //     {
-    //       'avatar': 'path.html'
-    //     },
-    //     'offer':
-    //     {
-    //       'title': 'Заголовок объявления',
-    //       'address': 'Какой-то адрес',
-    //       'price': 'Цена',
-    //       'type': 'Тип',
-    //       'rooms': 'Количество комнат',
-    //       'guests': 'Количество гостей',
-    //       'checkin': 'Время заезда',
-    //       'checkout': 'Время выезда',
-    //       'features': 'Фишки',
-    //       'description': 'Описание',
-    //       'fotos': 'Фотографии'
-    //     },
-    //     'location':
-    //     {
-    //       'x': 'Координата X',
-    //       'y': 'Координата Y'
-    //     }
-    //   };
 
     const hideCardElement = function (adData, cardElement) {
       if (!adData) {
@@ -97,7 +70,6 @@
       cardFeaturesElement.appendChild(newFeature);
     }
 
-    let photo = cardPhotosElement.querySelector(`img`); // это img, я его беру как шаблон
     cardPhotosElement.innerHTML = ``;
     for (let i = 0; i < ad.offer.photos.length; i++) {
       let newPhoto = photo.cloneNode(true);
@@ -105,14 +77,22 @@
       cardPhotosElement.appendChild(newPhoto);
     }
 
-    const popupCloseButton = card.querySelector(`.popup__close`);
-    popupCloseButton.addEventListener(`click`, cardCloseButtonHandler);
-    document.addEventListener(`keydown`, function (evt) {
+    const cardCloseButtonClickHandler = function () {
+      removeCard();
+      popupCloseButton.removeEventListener(`click`, cardCloseButtonClickHandler);
+      document.removeEventListener(`keydown`, cardEscapePressHandler);
+    };
+
+    const cardEscapePressHandler = function (evt) {
       if (evt.key === `Escape`) {
         removeCard();
       }
-    });
+      popupCloseButton.removeEventListener(`click`, cardCloseButtonClickHandler);
+      document.removeEventListener(`keydown`, cardEscapePressHandler);
+    };
 
+    popupCloseButton.addEventListener(`click`, cardCloseButtonClickHandler);
+    document.addEventListener(`keydown`, cardEscapePressHandler);
     cardBlockElement.insertBefore(card, beforeBlock);
   };
 

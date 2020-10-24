@@ -4,7 +4,7 @@
   const SEND_URL = `https://21.javascript.pages.academy/keksobooking`;
 
   const getBookingOffers = function (onSuccess, onError) {
-    let xhr = new XMLHttpRequest();
+    const xhr = new XMLHttpRequest();
     xhr.responseType = `json`;
     xhr.open(`GET`, GET_URL);
 
@@ -22,13 +22,12 @@
     xhr.addEventListener(`timeout`, function () {
       onError(`Запрос не успел выполниться за ${xhr.timeout} мс`);
     });
-    // xhr.timeout = 10;
+
     xhr.send();
   };
 
   const sendNewBookingOffer = function (data, onSuccess, onError) {
-
-    let xhr = new XMLHttpRequest();
+    const xhr = new XMLHttpRequest();
     xhr.responseType = `json`;
     xhr.open(`POST`, SEND_URL);
 
@@ -46,7 +45,7 @@
     xhr.addEventListener(`timeout`, function () {
       onError();
     });
-    // xhr.timeout = 10;
+
     xhr.send(data);
   };
 
@@ -54,5 +53,4 @@
     getBookingOffers,
     sendNewBookingOffer
   };
-
 })();
