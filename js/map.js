@@ -10,19 +10,14 @@
   const mainPin = document.querySelector(`.map__pin--main`);
   const mainPinStartX = 570;
   const mainPinStartY = 375;
+  const MAX_PINS_AMOUNT = 5;
+  const mapPinsElement = document.querySelector(`.map__pins`);
+  const pinsFragment = document.createDocumentFragment();
+  let adCollection = [];
 
-  let mapPinsElement = document.querySelector(`.map__pins`);
-  let pinsFragment = document.createDocumentFragment();
-
-  const mainPinFirstClickHandler = function () {
-    window.map.activateMap();
-    window.map.enableMapFilters();
-    window.form.enableForm();
-    mainPin.removeEventListener(`mousedown`, mainPinFirstClickHandler);
-  };
-
-  const renderPin = function (data) {
-    for (let i = 0; i < data.length; i++) {
+  const renderPins = function (data) {
+    const PINS_AMOUNT = (data.length <= MAX_PINS_AMOUNT) ? data.length : MAX_PINS_AMOUNT;
+    for (let i = 0; i < PINS_AMOUNT; i++) {
       pinsFragment.appendChild(window.pin.generatePin(data[i]));
     }
     mapPinsElement.appendChild(pinsFragment);
@@ -35,8 +30,21 @@
     }
   };
 
-  const successHandler = function (adCollection) {
-    renderPin(adCollection);
+  const updatePins = function () {
+    const filteredAds = window.filter.filterAds(adCollection);
+    removePins();
+    window.card.removeCard();
+    renderPins(filteredAds);
+  };
+
+  const mapFiltersChangeHandler = function () {
+    updatePins();
+  };
+
+  const successHandler = function (data) {
+    adCollection = data;
+    enableMapFilters();
+    updatePins();
   };
 
   const errorHandler = function (errorMessage) {
@@ -68,10 +76,14 @@
     mainPin.style.left = `${mainPinStartX}px`;
     mainPin.style.top = `${mainPinStartY}px`;
     address.value = `${Math.round(mainPinStartX + mainPin.offsetWidth / 2)} ${Math.round(mainPinStartY + mainPin.offsetHeight / 2)}`;
-    mainPin.addEventListener(`mousedown`, mainPinFirstClickHandler);
+
+    mainPin.addEventListener(`mousedown`, window.pin.mainPinFirstClickHandler);
+    mainPin.addEventListener(`keydown`, window.pin.mainPinEnterPressHandler);
+    mainPin.addEventListener(`mousedown`, window.pin.mainPinMoveHandler);
   };
 
   const disableMapFilters = function () {
+    mapFilters.reset();
     mapFiltersFeatures.disabled = true;
     for (let select of mapFiltersSelects) {
       select.disabled = true;
@@ -84,6 +96,8 @@
       select.disabled = false;
     }
   };
+
+  mapFilters.addEventListener(`change`, mapFiltersChangeHandler);
 
   window.map = {
     activateMap,

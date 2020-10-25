@@ -2,7 +2,28 @@
 
 (function () {
   const adForm = document.querySelector(`.ad-form`);
+  const adFormResetButton = adForm.querySelector(`.ad-form__reset`);
   const fieldsets = adForm.querySelectorAll(`fieldset`);
+  const inputTitle = adForm.querySelector(`#title`);
+  const inputRooms = adForm.querySelector(`#room_number`);
+  const inputCapacity = adForm.querySelector(`#capacity`);
+  const offerPriceInputElement = adForm.querySelector(`#price`);
+  const offerHouseTypeSelectElement = adForm.querySelector(`#type`);
+  const inputAddress = adForm.querySelector(`#address`);
+  const inputCheckin = adForm.querySelector(`#timein`);
+  const inputCheckout = adForm.querySelector(`#timeout`);
+  const inputAvatar = adForm.querySelector(`#avatar`);
+  const inputImages = adForm.querySelector(`#images`);
+  const cardTypesAndPricesMap = {
+    flat: `1000`,
+    bungalow: `0`,
+    house: `5000`,
+    palace: `10000`
+  };
+  const templateSuccessMessageElement = document.querySelector(`#success`).content.querySelector(`div`);
+  const templateErrorMessageElement = document.querySelector(`#error`).content.querySelector(`div`);
+  const main = document.querySelector(`main`);
+  let successMessageElement;
 
   const disableForm = function () {
     adForm.classList.add(`ad-form--disabled`);
@@ -18,53 +39,7 @@
     }
   };
 
-  // Валидация формы
-  let inputTitle = adForm.querySelector(`#title`);
-  let inputRooms = adForm.querySelector(`#room_number`);
-  let inputCapacity = adForm.querySelector(`#capacity`);
-  let offerPriceInputElement = adForm.querySelector(`#price`);
-
-  inputTitle.addEventListener(`input`, function () {
-    if (inputTitle.validity.valueMissing) {
-      inputTitle.setCustomValidity(`Необходимо указать заголовок объявления`);
-    } else if (inputTitle.validity.tooShort) {
-      inputTitle.setCustomValidity(`Заголовок должен быть от 30 символов`);
-    } else if (inputTitle.validity.tooLong) {
-      inputTitle.setCustomValidity(`Заголовок должен быть до 100 символов`);
-    } else {
-      inputTitle.setCustomValidity(``);
-    }
-  });
-
-  inputRooms.addEventListener(`input`, function (evt) {
-    for (let i = 0; i < inputCapacity.options.length; i++) {
-      const capacityOption = inputCapacity.options[i];
-      const roomOptionValue = Number(evt.target.value);
-      const capacityOptionValue = Number(capacityOption.value);
-
-      const isOptionDisabled = roomOptionValue === 100
-        ? capacityOptionValue !== 0
-        : capacityOptionValue > roomOptionValue || capacityOptionValue === 0;
-
-      const isOptionSelected = roomOptionValue === 100
-        ? capacityOptionValue === 0
-        : roomOptionValue === capacityOptionValue;
-
-      capacityOption.disabled = isOptionDisabled;
-      capacityOption.selected = isOptionSelected;
-    }
-  });
-
-  let offerHouseTypeSelectElement = adForm.querySelector(`#type`);
-
-  const cardTypesAndPricesMap = {
-    flat: `1000`,
-    bungalow: `0`,
-    house: `5000`,
-    palace: `10000`
-  };
-
-  const validateHouseTypePrice = function () {
+  const houseTypePriceInputHandler = function () {
     if (offerPriceInputElement.value.length === 0) {
       offerPriceInputElement.setCustomValidity(`Укажите цену`);
       return false;
@@ -82,53 +57,72 @@
     return offerPriceInputElement.setCustomValidity(``);
   };
 
-  offerPriceInputElement.addEventListener(`input`, validateHouseTypePrice);
-  offerHouseTypeSelectElement.addEventListener(`change`, validateHouseTypePrice);
+  const titleInputHandler = function () {
+    if (inputTitle.validity.valueMissing) {
+      inputTitle.setCustomValidity(`Необходимо указать заголовок объявления`);
+    } else if (inputTitle.validity.tooShort) {
+      inputTitle.setCustomValidity(`Заголовок должен быть от 30 символов`);
+    } else if (inputTitle.validity.tooLong) {
+      inputTitle.setCustomValidity(`Заголовок должен быть до 100 символов`);
+    } else {
+      inputTitle.setCustomValidity(``);
+    }
+  };
 
-  offerHouseTypeSelectElement.addEventListener(`change`, function () {
+  const roomsInputHandler = function (evt) {
+    for (let i = 0; i < inputCapacity.options.length; i++) {
+      const capacityOption = inputCapacity.options[i];
+      const roomOptionValue = Number(evt.target.value);
+      const capacityOptionValue = Number(capacityOption.value);
+
+      const isOptionDisabled = roomOptionValue === 100
+        ? capacityOptionValue !== 0
+        : capacityOptionValue > roomOptionValue || capacityOptionValue === 0;
+
+      const isOptionSelected = roomOptionValue === 100
+        ? capacityOptionValue === 0
+        : roomOptionValue === capacityOptionValue;
+
+      capacityOption.disabled = isOptionDisabled;
+      capacityOption.selected = isOptionSelected;
+    }
+  };
+
+  const houseTypeChangeHandler = function () {
     offerPriceInputElement.setAttribute(`placeholder`, Number(cardTypesAndPricesMap[offerHouseTypeSelectElement.value]));
-  });
+  };
 
-  let inputAddress = adForm.querySelector(`#address`);
-  inputAddress.readOnly = true;
-  inputAddress.required = true;
-
-  let inputCheckin = adForm.querySelector(`#timein`);
-  let inputCheckout = adForm.querySelector(`#timeout`);
-
-  inputCheckin.addEventListener(`change`, function () {
+  const checkinChangeHandler = function () {
     inputCheckout.value = inputCheckin.value;
-  });
+  };
 
-  inputCheckout.addEventListener(`change`, function () {
+  const checkoutChangeHandler = function () {
     inputCheckin.value = inputCheckout.value;
-  });
+  };
 
-  let inputAvatar = adForm.querySelector(`#avatar`);
-  inputAvatar.accept = `image/png, image/jpeg`;
-  let inputImages = adForm.querySelector(`#images`);
-  inputImages.accept = `image/png, image/jpeg`;
+  const successMessageElementClickHandler = function () {
+    successMessageElement.remove();
+    document.removeEventListener(`click`, successMessageElementClickHandler);
+    document.removeEventListener(`keydown`, successMessageElementEscPressHandler);
+  };
 
-  // adFormSubmitHandler
-  const templateSuccessMessageElement = document.querySelector(`#success`).content.querySelector(`div`);
-  const templateErrorMessageElement = document.querySelector(`#error`).content.querySelector(`div`);
-  const main = document.querySelector(`main`);
+  const successMessageElementEscPressHandler = function (evt) {
+    if (evt.key === `Escape`) {
+      successMessageElementClickHandler();
+    }
+    document.removeEventListener(`click`, successMessageElementClickHandler);
+    document.removeEventListener(`keydown`, successMessageElementEscPressHandler);
+  };
 
   const successHandler = function () {
-    const successMessageElement = templateSuccessMessageElement.cloneNode(true);
+    successMessageElement = templateSuccessMessageElement.cloneNode(true);
     main.insertAdjacentElement(`afterbegin`, successMessageElement);
     window.map.disableMapFilters();
     window.form.disableForm();
     adForm.reset();
     window.map.deactivateMap();
-    document.addEventListener(`click`, function () {
-      document.querySelector(`.success`).remove();
-    });
-    document.addEventListener(`keydown`, function (evt) {
-      if (evt.key === `Escape`) {
-        document.querySelector(`.success`).remove();
-      }
-    });
+    document.addEventListener(`click`, successMessageElementClickHandler);
+    document.addEventListener(`keydown`, successMessageElementEscPressHandler);
   };
 
   const errorHandler = function () {
@@ -137,17 +131,40 @@
       document.querySelector(`.error`).remove();
     });
     main.insertAdjacentElement(`afterbegin`, errorMessageElement);
-
   };
 
-  adForm.addEventListener(`submit`, function (evt) {
+  const adFormSubmitHandler = function (evt) {
     evt.preventDefault();
     window.backend.sendNewBookingOffer(new FormData(adForm), successHandler, errorHandler);
-  });
+  };
+
+  const adFormResetHandler = function (evt) {
+    evt.preventDefault();
+    window.map.disableMapFilters();
+    window.form.disableForm();
+    adForm.reset();
+    window.map.deactivateMap();
+  };
+
+  inputAddress.readOnly = true;
+  inputAddress.required = true;
+  inputAvatar.accept = `image/png, image/jpeg`;
+  inputImages.accept = `image/png, image/jpeg`;
+
+  inputTitle.addEventListener(`input`, titleInputHandler);
+  inputRooms.addEventListener(`input`, roomsInputHandler);
+  offerPriceInputElement.addEventListener(`input`, houseTypePriceInputHandler);
+  offerHouseTypeSelectElement.addEventListener(`change`, houseTypePriceInputHandler);
+  offerHouseTypeSelectElement.addEventListener(`change`, houseTypeChangeHandler);
+  inputCheckin.addEventListener(`change`, checkinChangeHandler);
+  inputCheckout.addEventListener(`change`, checkoutChangeHandler);
+
+  adForm.addEventListener(`submit`, adFormSubmitHandler);
+
+  adFormResetButton.addEventListener(`click`, adFormResetHandler);
 
   window.form = {
     disableForm,
     enableForm
   };
-
 })();
