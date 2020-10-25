@@ -38,7 +38,7 @@
   };
 
   const mapFiltersChangeHandler = function () {
-    updatePins();
+    window.debounce.debounce(updatePins);
   };
 
   const successHandler = function (data) {
