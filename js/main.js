@@ -1,7 +1,5 @@
 'use strict';
 
-(function () {
-  window.map.deactivateMap();
-  window.map.disableMapFilters();
-  window.form.disableForm();
-})();
+window.map.deactivateMap();
+window.map.disableMapFilters();
+window.form.disableForm();
