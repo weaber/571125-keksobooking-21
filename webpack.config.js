@@ -2,6 +2,7 @@ const path = require(`path`);
 
 module.exports = {
   entry: [
+    `/js/preview.js`,
     `/js/backend.js`,
     `/js/pin.js`,
     `/js/card.js`,
