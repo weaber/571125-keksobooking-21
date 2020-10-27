@@ -1,15 +1,15 @@
 'use strict';
 
-const DEBOUNCE_INTERVAL = 500;
-let lastTimeout;
+const DEBOUNCE_INTERVAL = 500; // ms
 
-const debounce = function (cb) {
-  if (lastTimeout) {
-    clearTimeout(lastTimeout);
-  }
-  lastTimeout = setTimeout(cb, DEBOUNCE_INTERVAL);
-};
-
-window.debounce = {
-  debounce
+window.debounce = function (cb) {
+  let lastTimeout = null;
+  return function (...args) {
+    if (lastTimeout) {
+      window.clearTimeout(lastTimeout);
+    }
+    lastTimeout = window.setTimeout(function () {
+      cb.apply(null, ...args);
+    }, DEBOUNCE_INTERVAL);
+  };
 };
