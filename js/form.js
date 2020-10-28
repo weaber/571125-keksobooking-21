@@ -118,6 +118,7 @@ const successHandler = function () {
   main.insertAdjacentElement(`afterbegin`, successMessageElement);
   window.map.disableMapFilters();
   window.form.disableForm();
+  window.removePreview();
   adForm.reset();
   window.map.deactivateMap();
   document.addEventListener(`click`, successMessageElementClickHandler);

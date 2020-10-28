@@ -36,8 +36,10 @@ const updatePins = function () {
   renderPins(filteredAds);
 };
 
+const updateFiltersWithDebounce = window.debounce(updatePins);
+
 const mapFiltersChangeHandler = function () {
-  window.debounce.debounce(updatePins);
+  updateFiltersWithDebounce();
 };
 
 const successHandler = function (data) {
