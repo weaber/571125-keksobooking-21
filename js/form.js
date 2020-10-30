@@ -125,11 +125,26 @@ const successHandler = function () {
   document.addEventListener(`keydown`, successMessageElementEscPressHandler);
 };
 
+const errorMessageElementCloseButtonHandler = function () {
+  document.querySelector(`.error`).remove();
+  document.removeEventListener(`click`, errorMessageElementCloseButtonHandler);
+  document.removeEventListener(`keydown`, errorMessageElementEscPressHandler);
+};
+
+const errorMessageElementEscPressHandler = function (evt) {
+  if (evt.key === `Escape`) {
+    document.querySelector(`.error`).remove();
+  }
+  document.removeEventListener(`click`, errorMessageElementCloseButtonHandler);
+  document.removeEventListener(`keydown`, errorMessageElementEscPressHandler);
+};
+
 const errorHandler = function () {
   const errorMessageElement = templateErrorMessageElement.cloneNode(true);
-  errorMessageElement.querySelector(`button`).addEventListener(`click`, function () {
-    document.querySelector(`.error`).remove();
-  });
+  const errorMessageElementButton = errorMessageElement.querySelector(`button`);
+  errorMessageElementButton.addEventListener(`click`, errorMessageElementCloseButtonHandler);
+  document.addEventListener(`click`, errorMessageElementCloseButtonHandler);
+  document.addEventListener(`keydown`, errorMessageElementEscPressHandler);
   main.insertAdjacentElement(`afterbegin`, errorMessageElement);
 };
 
@@ -142,6 +157,7 @@ const adFormResetHandler = function (evt) {
   evt.preventDefault();
   window.map.disableMapFilters();
   window.form.disableForm();
+  window.removePreview();
   adForm.reset();
   window.map.deactivateMap();
 };

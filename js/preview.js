@@ -34,6 +34,8 @@ houseLoadElement.addEventListener(`change`, function () {
     let reader = new FileReader();
     reader.addEventListener(`load`, function () {
       let housePhotoPreview = document.createElement(`img`);
+      housePhotoPreview.style = `
+      width: 100%;`;
       housePhotoPreview.src = reader.result;
       housePreviewElement.append(housePhotoPreview);
     });

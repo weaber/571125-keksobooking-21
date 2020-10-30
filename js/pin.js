@@ -17,10 +17,10 @@ const generatePin = function (ad) {
 
   pin.querySelector(`img`).setAttribute(`src`, ad.author.avatar);
   pin.querySelector(`img`).setAttribute(`alt`, ad.offer.title);
-  const pinOffsetX = 25;
-  const pinOffsetY = 70;
+  const PIN_OFFSET_X = 25;
+  const PIN_OFFSET_Y = 70;
 
-  pin.setAttribute(`style`, `left: ${(ad.location.x - pinOffsetX)}px; top: ${(ad.location.y - pinOffsetY)}px;`);
+  pin.setAttribute(`style`, `left: ${(ad.location.x - PIN_OFFSET_X)}px; top: ${(ad.location.y - PIN_OFFSET_Y)}px;`);
 
   pin.addEventListener(`click`, function () {
     removeClassActive();
@@ -37,11 +37,13 @@ const generatePin = function (ad) {
   return pin;
 };
 
-const mainPinFirstClickHandler = function () {
-  window.map.activateMap();
-  window.form.enableForm();
-  mainPin.removeEventListener(`keydown`, mainPinEnterPressHandler);
-  mainPin.removeEventListener(`mousedown`, mainPinFirstClickHandler);
+const mainPinFirstClickHandler = function (evt) {
+  if (evt.button === 0) {
+    window.map.activateMap();
+    window.form.enableForm();
+    mainPin.removeEventListener(`keydown`, mainPinEnterPressHandler);
+    mainPin.removeEventListener(`mousedown`, mainPinFirstClickHandler);
+  }
 };
 
 const mainPinMoveHandler = function (evt) {
@@ -67,13 +69,13 @@ const mainPinMoveHandler = function (evt) {
 
       let mainPinnewX = mainPin.offsetLeft - shift.x;
       let mainPinNewY = mainPin.offsetTop - shift.y;
-      const mainPinYMin = 130 - mainPin.offsetHeight;
-      const mainPinYMax = 630;
+      const MAIN_PIN_Y_MIN = 130;
+      const MAIN_PIN_Y_MAX = 630;
 
       if (mainPinnewX > 0 - mainPin.offsetWidth / 2 && mainPinnewX < map.offsetWidth - mainPin.offsetWidth / 2) {
         mainPin.style.left = `${mainPinnewX}px`;
       }
-      if (mainPinNewY > mainPinYMin && mainPinNewY < mainPinYMax) {
+      if (mainPinNewY > MAIN_PIN_Y_MIN && mainPinNewY < MAIN_PIN_Y_MAX) {
         mainPin.style.top = `${mainPin.offsetTop - shift.y}px`;
       }
       inputAddress.value = `${mainPinnewX} ${mainPinNewY}`;
