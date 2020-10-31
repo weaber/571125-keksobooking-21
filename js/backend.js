@@ -2,6 +2,7 @@
 
 const GET_URL = `https://21.javascript.pages.academy/keksobooking/data`;
 const SEND_URL = `https://21.javascript.pages.academy/keksobooking`;
+const SUCCESS_CODE = 200;
 
 const getBookingOffers = function (onSuccess, onError) {
   const xhr = new XMLHttpRequest();
@@ -9,7 +10,7 @@ const getBookingOffers = function (onSuccess, onError) {
   xhr.open(`GET`, GET_URL);
 
   xhr.addEventListener(`load`, function () {
-    if (xhr.status === 200) {
+    if (xhr.status === SUCCESS_CODE) {
       onSuccess(xhr.response);
     } else {
       onError(`Статус ответа ${xhr.status}. ${xhr.statusText}`);
@@ -32,7 +33,7 @@ const sendNewBookingOffer = function (data, onSuccess, onError) {
   xhr.open(`POST`, SEND_URL);
 
   xhr.addEventListener(`load`, function () {
-    if (xhr.status === 200) {
+    if (xhr.status === SUCCESS_CODE) {
       onSuccess(xhr.response);
     } else {
       onError();

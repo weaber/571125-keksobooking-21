@@ -27,7 +27,7 @@ const renderCard = function (ad) {
   const cardPhotosElement = card.querySelector(`.popup__photos`);
   const photo = cardPhotosElement.querySelector(`img`);
   const cardAvatarElement = card.querySelector(`.popup__avatar`);
-  const cardTypesMap = {
+  const CardTypesMap = {
     flat: `Квартира`,
     bungalow: `Бунгало`,
     house: `Дом`,
@@ -56,7 +56,7 @@ const renderCard = function (ad) {
   cardTitleElement.textContent = ad.offer.title;
   cardAddressElement.textContent = ad.offer.address;
   cardPriceElement.textContent = `${ad.offer.price}₽/ночь`;
-  cardTypeElement.textContent = cardTypesMap[ad.offer.type];
+  cardTypeElement.textContent = CardTypesMap[ad.offer.type];
   cardCapacityElement.textContent = `${ad.offer.rooms} комнаты для ${ad.offer.guests} гостей`;
   cardTimeElement.textContent = `Заезд после ${ad.offer.checkin}, выезд до ${ad.offer.checkout}`;
   cardDescriptionElement.textContent = ad.offer.description;
