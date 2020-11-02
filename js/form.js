@@ -13,7 +13,7 @@ const inputCheckin = adForm.querySelector(`#timein`);
 const inputCheckout = adForm.querySelector(`#timeout`);
 const inputAvatar = adForm.querySelector(`#avatar`);
 const inputImages = adForm.querySelector(`#images`);
-const cardTypesAndPricesMap = {
+const CardTypesAndPricesMap = {
   flat: `1000`,
   bungalow: `0`,
   house: `5000`,
@@ -25,6 +25,8 @@ const main = document.querySelector(`main`);
 let successMessageElement;
 
 const disableForm = function () {
+  setRoomsGuestsMatch(inputRooms.value);
+  setHouseTypePlaceholder();
   adForm.classList.add(`ad-form--disabled`);
   for (let fieldset of fieldsets) {
     fieldset.disabled = true;
@@ -49,8 +51,8 @@ const houseTypePriceInputHandler = function () {
     return false;
   }
 
-  if (offerPriceInputElement.value < Number(cardTypesAndPricesMap[offerHouseTypeSelectElement.value])) {
-    offerPriceInputElement.setCustomValidity(`Цена должна быть больше ${cardTypesAndPricesMap[offerHouseTypeSelectElement.value]}`);
+  if (offerPriceInputElement.value < Number(CardTypesAndPricesMap[offerHouseTypeSelectElement.value])) {
+    offerPriceInputElement.setCustomValidity(`Цена должна быть больше ${CardTypesAndPricesMap[offerHouseTypeSelectElement.value]}`);
     return false;
   }
   return offerPriceInputElement.setCustomValidity(``);
@@ -68,10 +70,10 @@ const titleInputHandler = function () {
   }
 };
 
-const roomsInputHandler = function (evt) {
+const setRoomsGuestsMatch = function (roomsQuantity) {
   for (let i = 0; i < inputCapacity.options.length; i++) {
     const capacityOption = inputCapacity.options[i];
-    const roomOptionValue = Number(evt.target.value);
+    const roomOptionValue = roomsQuantity;
     const capacityOptionValue = Number(capacityOption.value);
 
     const isOptionDisabled = roomOptionValue === 100
@@ -87,8 +89,16 @@ const roomsInputHandler = function (evt) {
   }
 };
 
+const roomsInputHandler = function (evt) {
+  setRoomsGuestsMatch(Number(evt.target.value));
+};
+
+const setHouseTypePlaceholder = function () {
+  offerPriceInputElement.setAttribute(`placeholder`, Number(CardTypesAndPricesMap[offerHouseTypeSelectElement.value]));
+};
+
 const houseTypeChangeHandler = function () {
-  offerPriceInputElement.setAttribute(`placeholder`, Number(cardTypesAndPricesMap[offerHouseTypeSelectElement.value]));
+  setHouseTypePlaceholder();
 };
 
 const checkinChangeHandler = function () {
@@ -108,18 +118,18 @@ const successMessageElementClickHandler = function () {
 const successMessageElementEscPressHandler = function (evt) {
   if (evt.key === `Escape`) {
     successMessageElementClickHandler();
+    document.removeEventListener(`click`, successMessageElementClickHandler);
+    document.removeEventListener(`keydown`, successMessageElementEscPressHandler);
   }
-  document.removeEventListener(`click`, successMessageElementClickHandler);
-  document.removeEventListener(`keydown`, successMessageElementEscPressHandler);
 };
 
 const successHandler = function () {
   successMessageElement = templateSuccessMessageElement.cloneNode(true);
   main.insertAdjacentElement(`afterbegin`, successMessageElement);
   window.map.disableMapFilters();
-  window.form.disableForm();
   window.removePreview();
   adForm.reset();
+  disableForm();
   window.map.deactivateMap();
   document.addEventListener(`click`, successMessageElementClickHandler);
   document.addEventListener(`keydown`, successMessageElementEscPressHandler);
@@ -134,9 +144,9 @@ const errorMessageElementCloseButtonHandler = function () {
 const errorMessageElementEscPressHandler = function (evt) {
   if (evt.key === `Escape`) {
     document.querySelector(`.error`).remove();
+    document.removeEventListener(`click`, errorMessageElementCloseButtonHandler);
+    document.removeEventListener(`keydown`, errorMessageElementEscPressHandler);
   }
-  document.removeEventListener(`click`, errorMessageElementCloseButtonHandler);
-  document.removeEventListener(`keydown`, errorMessageElementEscPressHandler);
 };
 
 const errorHandler = function () {
@@ -156,9 +166,9 @@ const adFormSubmitHandler = function (evt) {
 const adFormResetHandler = function (evt) {
   evt.preventDefault();
   window.map.disableMapFilters();
-  window.form.disableForm();
   window.removePreview();
   adForm.reset();
+  disableForm();
   window.map.deactivateMap();
 };
 

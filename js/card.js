@@ -78,19 +78,31 @@ const renderCard = function (ad) {
 
   const cardCloseButtonClickHandler = function () {
     removeCard();
+    popupCloseButton.removeEventListener(`keydown`, cardCloseButtonEnterPressHandler);
     popupCloseButton.removeEventListener(`click`, cardCloseButtonClickHandler);
     document.removeEventListener(`keydown`, cardEscapePressHandler);
+  };
+
+  const cardCloseButtonEnterPressHandler = function (evt) {
+    if (evt.key === `Enter`) {
+      removeCard();
+      popupCloseButton.removeEventListener(`keydown`, cardCloseButtonEnterPressHandler);
+      popupCloseButton.removeEventListener(`click`, cardCloseButtonClickHandler);
+      document.removeEventListener(`keydown`, cardEscapePressHandler);
+    }
   };
 
   const cardEscapePressHandler = function (evt) {
     if (evt.key === `Escape`) {
       removeCard();
+      popupCloseButton.removeEventListener(`keydown`, cardCloseButtonEnterPressHandler);
+      popupCloseButton.removeEventListener(`click`, cardCloseButtonClickHandler);
+      document.removeEventListener(`keydown`, cardEscapePressHandler);
     }
-    popupCloseButton.removeEventListener(`click`, cardCloseButtonClickHandler);
-    document.removeEventListener(`keydown`, cardEscapePressHandler);
   };
 
   popupCloseButton.addEventListener(`click`, cardCloseButtonClickHandler);
+  popupCloseButton.addEventListener(`keydown`, cardCloseButtonEnterPressHandler);
   document.addEventListener(`keydown`, cardEscapePressHandler);
   cardBlockElement.insertBefore(card, beforeBlock);
 };
